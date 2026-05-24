@@ -72,7 +72,7 @@ function atRequest(method, path, data) {
 }
 
 function atGetRecords(tableId) {
-  return atRequest('GET', tableId + '?maxRecords=200&sort[0][field]=Date&sort[0][direction]=desc');
+  return atRequest('GET', tableId + '?maxRecords=200');
 }
 
 function atCreateRecord(tableId, fields) {
@@ -339,6 +339,37 @@ app.get('/api/clients', function(req, res) {
     .catch(function(e) { res.status(500).json({ error: e.message }); });
 });
 
+// POST add client (клиентите са фиксирани в Airtable - връщаме грешка)
+app.post('/api/clients', function(req, res) {
+  res.status(400).json({ error: 'Клиентите са фиксирани. Моля редактирай съществуващ клиент.' });
+});
+
+// PATCH edit client name/color (само локално - Airtable таблиците са фиксирани)
+app.patch('/api/clients/:id', function(req, res) {
+  var num = Number(req.params.id);
+  for (var i = 0; i < CLIENT_LIST.length; i++) {
+    if (CLIENT_LIST[i].id === num) {
+      if (req.body.name) CLIENT_LIST[i].name = req.body.name;
+      if (req.body.color) CLIENT_LIST[i].color = req.body.color;
+      res.json(CLIENT_LIST[i]);
+      return;
+    }
+  }
+  res.status(404).json({ error: 'Client not found' });
+});
+
+// DELETE client (не поддържаме - Airtable таблиците са фиксирани)
+app.delete('/api/clients/:id', function(req, res) {
+  res.status(400).json({ error: 'Изтриването на клиент не е поддържано.' });
+});
+
+// POST settle client (нулиране на сметка - записваме бележка)
+app.post('/api/clients/:id/settle', function(req, res) {
+  // Settlement е просто потвърждение - балансът се изчислява от записите
+  broadcast({ type: 'client_settled', client_id: req.params.id });
+  res.json({ success: true, balance: 0 });
+});
+
 // GET client slips
 app.get('/api/clients/:id/slips', function(req, res) {
   var client = getClientById(req.params.id);
@@ -435,7 +466,7 @@ app.post('/api/analyze', upload.single('image'), function(req, res) {
     var slipDate = slip.slipDate || new Date().toISOString().split('T')[0];
     return resolveMatches(slip.matches || [], slipDate).then(function(resolved) {
       var anyLoss = resolved.some(function(m) { return m.result === 'LOSS'; });
-      var allWin = resolved.every(function(m) { return m.result === 'WIN'; });
+      var allWin = resolved.length > 0 && resolved.every(function(m) { return m.result === 'WIN'; });
       var isProfit = anyLoss;
       var isPending = !anyLoss && !allWin;
       var ourAmount = isPending ? 0 : isProfit ? Number(slip.stake) : Number(slip.potentialWin);
@@ -507,7 +538,7 @@ app.patch('/api/slips/:id', function(req, res) {
   fields[client.config.fields.result] = atResult;
   fields[client.config.fields.ourAmount] = Number(b.our_amount) || 0;
 
-  atRequest('PATCH', client.config.tableId + '/' + slipData.atId, { fields: fields })
+  atRequest('PATCH', client.config.tableId + '/' + slipData.atId, { fields: fields, typecast: true })
     .then(function() {
       slipsStore[req.params.id].matches = b.matches || slipData.matches;
       broadcast({ type: 'slip_updated' });
