@@ -622,6 +622,16 @@ function openModal(title, body) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML = body;
   document.getElementById('modal-overlay').style.display = 'flex';
+  // Prevent Enter key from submitting/searching
+  var inputs = document.getElementById('modal-body').querySelectorAll('input,textarea,select');
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  }
 }
 
 function closeModal() {
