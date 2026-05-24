@@ -14,6 +14,12 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(cors());
+
+// Log ALL requests
+app.use(function(req, res, next) {
+  console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.path + ' body:' + JSON.stringify(req.body).slice(0,100));
+  next();
+});
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
