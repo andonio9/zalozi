@@ -167,7 +167,7 @@ body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
   </div>
   <div class="sec-hdr">
     <div class="sec-title">Клиенти</div>
-    <button class="btn-sm" onclick="openAddClient()">+ Нов клиент</button>
+    <button type="button" class="btn-sm" onclick="openAddClient()">+ Нов клиент</button>
   </div>
   <div class="grid2" id="clients-grid"></div>
   <div class="upload-wrap">
@@ -178,22 +178,22 @@ body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
         <div style="font-size:11px;color:rgba(255,255,255,.3)">bet365 · PNG · JPG · HEIC</div>
       </label>
       <input type="file" id="fin" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
-      <button class="btn-manual" onclick="openManual()">+ Добави ръчно</button>
+      <button type="button" class="btn-manual" onclick="openManual()">+ Добави ръчно</button>
     </div>
     <div id="u-prev" style="display:none">
       <img id="prev-img" class="prev-img" src="" alt="">
       <div class="sec-hdr" style="padding:0 0 8px"><div class="sec-title">Клиент</div></div>
       <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
       <div class="btn-row">
-        <button class="btn-p" onclick="analyze()">⚡ АНАЛИЗИРАЙ И ЗАПИШИ</button>
-        <button class="btn-s" onclick="resetUpload()">✕</button>
+        <button type="button" class="btn-p" onclick="analyze()">⚡ АНАЛИЗИРАЙ И ЗАПИШИ</button>
+        <button type="button" class="btn-s" onclick="resetUpload()">✕</button>
       </div>
     </div>
     <div id="u-proc" style="display:none">
       <div class="proc"><div class="proc-title">Обработвам фиша...</div><div id="steps-el"></div></div>
     </div>
     <div id="u-err" style="display:none">
-      <div class="err"><div class="err-m" id="err-m"></div><button class="err-c" onclick="showEl('u-err',false)">Затвори</button></div>
+      <div class="err"><div class="err-m" id="err-m"></div><button type="button" class="err-c" onclick="showEl('u-err',false)">Затвори</button></div>
     </div>
     <div id="u-res" style="display:none"></div>
   </div>
@@ -202,7 +202,7 @@ body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
 <div id="pg-live" class="page">
   <div style="padding:16px 14px 8px;display:flex;justify-content:space-between;align-items:center">
     <div style="font-size:16px;font-weight:500">На живо</div>
-    <button class="btn-sm" onclick="loadLive()">↻ Обнови</button>
+    <button type="button" class="btn-sm" onclick="loadLive()">↻ Обнови</button>
   </div>
   <div id="live-content"><div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Зарежда...</div></div>
 </div>
@@ -214,10 +214,10 @@ body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
 
 <div id="pg-client" class="page">
   <div class="cp-hdr">
-    <button class="cp-back" onclick="showPage('upload')">← Назад</button>
+    <button type="button" class="cp-back" onclick="showPage('upload')">← Назад</button>
     <div class="cp-name" id="cp-name">Клиент</div>
     <div class="cp-actions">
-      <button class="cp-act-btn" onclick="openEditClient()">Редактирай</button>
+      <button type="button" class="cp-act-btn" onclick="openEditClient()">Редактирай</button>
     </div>
   </div>
   <div class="cp-stats">
@@ -232,21 +232,21 @@ body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
   <div style="padding:0 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
     <div style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase">История</div>
     <div style="display:flex;gap:6px">
-      <button class="cp-act-btn" onclick="openSettle()">Нулирай сметка</button>
-      <button class="cp-act-btn" style="color:#f87171;border-color:rgba(248,113,113,.2)" onclick="deleteClient()">Изтрий</button>
+      <button type="button" class="cp-act-btn" onclick="openSettle()">Нулирай сметка</button>
+      <button type="button" class="cp-act-btn" style="color:#f87171;border-color:rgba(248,113,113,.2)" onclick="deleteClient()">Изтрий</button>
     </div>
   </div>
   <div id="client-slips"></div>
 </div>
 
 <nav class="nav">
-  <button class="nb act" id="nb-upload" onclick="showPage('upload')">
+  <button type="button" class="nb act" id="nb-upload" onclick="showPage('upload')">
     <span class="nb-i">📷</span><span class="nb-l" style="color:#60a5fa">Фиш</span>
   </button>
-  <button class="nb" id="nb-live" onclick="showPage('live')">
+  <button type="button" class="nb" id="nb-live" onclick="showPage('live')">
     <span class="nb-i">🔴</span><span class="nb-l">На живо</span>
   </button>
-  <button class="nb" id="nb-history" onclick="showPage('history')">
+  <button type="button" class="nb" id="nb-history" onclick="showPage('history')">
     <span class="nb-i">📋</span><span class="nb-l">История</span>
   </button>
 </nav>
@@ -359,7 +359,7 @@ function renderClients() {
       '<div class="cc-amt" style="color:' + nameColor + '">' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.</div>' +
       '<div class="cc-bar-bg"><div class="cc-bar-fill" style="width:' + Math.min(100, Math.abs(bal)/10) + '%;background:' + (bal >= 0 ? '#4ade80' : '#f87171') + ';opacity:.3"></div></div>' +
       '<div class="cc-week">Тотал: <span style="color:' + (tot >= 0 ? '#4ade80' : '#f87171') + '">' + (tot >= 0 ? '+' : '') + Math.round(tot) + ' лв.</span></div>' +
-      '<button class="cc-btn" onclick="event.stopPropagation();confirmSettle(' + c.id + ')">Нулирай сметка</button>';
+      '<button type="button" class="cc-btn" onclick="event.stopPropagation();confirmSettle(' + c.id + ')">Нулирай сметка</button>';
     (function(client) {
       div.onclick = function() { openClientPage(client); };
     })(c);
@@ -496,8 +496,8 @@ function openEditClient() {
     '<div class="field"><label>Цвят</label><div class="colors" id="edit-colors">' + colorHtml + '</div></div>' +
     '<div class="field"><label>Бележки</label><textarea id="edit-notes" placeholder="Телефон, бележки...">' + (c.notes || '') + '</textarea></div>' +
     '<div class="modal-btns">' +
-    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
-    '<button class="modal-btn primary" onclick="saveEditClient(' + c.id + ')">Запази</button>' +
+    '<button type="button" class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button type="button" class="modal-btn primary" onclick="saveEditClient(' + c.id + ')">Запази</button>' +
     '</div>'
   );
 }
@@ -505,7 +505,7 @@ function openEditClient() {
 function saveEditClient(id) {
   var name = document.getElementById('edit-name').value.replace(/^\s+|\s+$/g, '');
   var notes = document.getElementById('edit-notes').value;
-  var selColor = document.querySelector('.color-opt.sel');
+  var selColor = document.querySelector('#modal-body .color-opt.sel');
   var color = selColor ? selColor.getAttribute('data-color') : '#3b82f6';
   if (!name) return;
   fetch('/api/clients/' + id, {
@@ -539,8 +539,8 @@ function openSettle() {
     '</div>' +
     '<div class="field"><label>Бележка</label><input id="settle-notes" placeholder="Платено в брой..."></div>' +
     '<div class="modal-btns">' +
-    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
-    '<button class="modal-btn primary" onclick="doSettle()">Нулирай</button>' +
+    '<button type="button" class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button type="button" class="modal-btn primary" onclick="doSettle()">Нулирай</button>' +
     '</div>'
   );
 }
@@ -583,24 +583,31 @@ function openAddClient() {
     '<div class="field"><label>Име</label><input id="new-name" placeholder="Румен"></div>' +
     '<div class="field"><label>Цвят</label><div class="colors" id="new-colors">' + colorHtml + '</div></div>' +
     '<div class="modal-btns">' +
-    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
-    '<button class="modal-btn primary" onclick="saveNewClient()">Добави</button>' +
+    '<button type="button" class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button type="button" class="modal-btn primary" onclick="saveNewClient()">Добави</button>' +
     '</div>'
   );
 }
 
 function saveNewClient() {
-  var name = document.getElementById('new-name').value.replace(/^\s+|\s+$/g, '');
-  var selColor = document.querySelector('.color-opt.sel');
+  var nameEl = document.getElementById('new-name');
+  if (!nameEl) { alert('Грешка: не намерих полето за име'); return; }
+  var name = nameEl.value.replace(/^\s+|\s+$/g, '');
+  if (!name) { alert('Въведи име'); return; }
+  var selColor = document.querySelector('#modal-body .color-opt.sel');
   var color = selColor ? selColor.getAttribute('data-color') : '#3b82f6';
-  if (!name) return;
   fetch('/api/clients', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({name:name,color:color})
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
   }).then(function() {
     closeModal();
     loadDashboard();
+  }).catch(function(e) {
+    alert('Грешка при запис: ' + e.message);
   });
 }
 
@@ -654,7 +661,7 @@ function updateSelPills() {
   for (var i = 0; i < CLIENTS.length; i++) {
     var c = CLIENTS[i];
     var isSel = selClientForUpload && selClientForUpload.id === c.id;
-    html += '<button onclick="pickClient(' + c.id + ')" style="padding:6px 14px;border-radius:20px;border:1px solid ' +
+    html += '<button type="button" onclick="pickClient(' + c.id + ')" style="padding:6px 14px;border-radius:20px;border:1px solid ' +
       (isSel ? c.color : 'rgba(255,255,255,.07)') +
       ';background:' + (isSel ? 'rgba(0,0,0,.2)' : 'transparent') +
       ';color:' + (isSel ? c.color : 'rgba(255,255,255,.3)') +
@@ -753,16 +760,16 @@ function renderResult(data) {
     }
     html += '<div class="mi">' + (w ? '❌' : l ? '✅' : v ? '🔴' : '⏳') + '</div>' +
       '<div class="obs">' +
-      '<button class="ob w" onclick="ovr(' + i + ',\'WIN\')">❌</button>' +
-      '<button class="ob l" onclick="ovr(' + i + ',\'LOSS\')">✅</button>' +
-      '<button class="ob p" onclick="ovr(' + i + ',\'PENDING\')">⏳</button>' +
+      '<button type="button" class="ob w" onclick="ovr(' + i + ',\'WIN\')">❌</button>' +
+      '<button type="button" class="ob l" onclick="ovr(' + i + ',\'LOSS\')">✅</button>' +
+      '<button type="button" class="ob p" onclick="ovr(' + i + ',\'PENDING\')">⏳</button>' +
       '</div></div></div>';
   }
   html += '</div>';
   if (isPending) {
-    html += '<button class="save-btn" onclick="manSave()">💾 ЗАПАЗИ РЪЧНО</button>';
+    html += '<button type="button" class="save-btn" onclick="manSave()">💾 ЗАПАЗИ РЪЧНО</button>';
   }
-  html += '<button class="save-btn" style="background:transparent;border-color:rgba(255,255,255,.07);color:rgba(255,255,255,.3)" onclick="resetUpload()">✕ Нов фиш</button></div>';
+  html += '<button type="button" class="save-btn" style="background:transparent;border-color:rgba(255,255,255,.07);color:rgba(255,255,255,.3)" onclick="resetUpload()">✕ Нов фиш</button></div>';
   ra.innerHTML = html;
 }
 
@@ -829,8 +836,8 @@ function openManual() {
     '<div class="field"><label>Наша сума (лв.)</label><input type="number" id="m-amount" placeholder="150"></div>' +
     '<div class="field"><label>Мачове (по избор)</label><input id="m-matches" placeholder="КАР - КОЛ"></div>' +
     '<div class="modal-btns">' +
-    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
-    '<button class="modal-btn primary" onclick="saveManual()">Запази</button>' +
+    '<button type="button" class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button type="button" class="modal-btn primary" onclick="saveManual()">Запази</button>' +
     '</div>'
   );
 }
