@@ -17,10 +17,7 @@ app.use(cors());
 
 // Log ALL requests
 app.use(function(req, res, next) {
-  try {
-    var bodyStr = req.body ? JSON.stringify(req.body).slice(0,100) : '';
-    console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.path + ' ' + bodyStr);
-  } catch(e) {}
+  console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.path);
   next();
 });
 app.use(express.json());
@@ -81,8 +78,14 @@ async function initDB() {
 // WEBSOCKET
 // ══════════════════════════════════════
 function broadcast(data) {
-  const msg = JSON.stringify(data);
-  wss.clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(msg); });
+  try {
+    var msg = JSON.stringify(data);
+    wss.clients.forEach(function(c) { 
+      if (c.readyState === WebSocket.OPEN) {
+        try { c.send(msg); } catch(e) {}
+      }
+    });
+  } catch(e) {}
 }
 
 // ══════════════════════════════════════
@@ -585,6 +588,20 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname,'public','index.html
 
 // Start auto-grading
 setInterval(autoGrade, 30000);
+
+// Global error handler - prevent server crashes
+process.on('uncaughtException', function(e) {
+  console.error('uncaughtException:', e.message);
+});
+process.on('unhandledRejection', function(e) {
+  console.error('unhandledRejection:', e);
+});
+
+// Express error handler
+app.use(function(err, req, res, next) {
+  console.error('Express error:', err.message);
+  res.status(500).json({ error: err.message });
+});
 
 // Init & Start
 const PORT = process.env.PORT || 3000;
