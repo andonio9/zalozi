@@ -521,6 +521,7 @@ app.post('/api/analyze', upload.single('image'), function(req, res) {
     });
   }).catch(function(e) {
     console.error('analyze error:', e.message);
+    console.error('analyze stack:', e.stack);
     res.status(500).json({ error: e.message });
   });
 });
@@ -619,4 +620,8 @@ process.on('unhandledRejection', function(e) { console.error('unhandledRejection
 var PORT = process.env.PORT || 3000;
 server.listen(PORT, function() {
   console.log('Server running on port ' + PORT);
+  console.log('AIRTABLE_KEY set:', !!process.env.AIRTABLE_KEY);
+  console.log('OPENAI_API_KEY set:', !!process.env.OPENAI_API_KEY);
+  console.log('SPORTS_API_KEY set:', !!process.env.SPORTS_API_KEY);
+  console.log('AT_BASE:', AT_BASE);
 });
