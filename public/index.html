@@ -2,447 +2,936 @@
 <html lang="bg">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Залог Система</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#030712;--surface:#0f172a;--card:#1e293b;--border:rgba(255,255,255,0.08);--text:#f1f5f9;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#3b82f6}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;padding-bottom:80px}
-.hdr{padding:20px 16px 0;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.logo{font-size:18px;font-weight:700}
-.live-badge{display:flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--green)}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+body{background:#080810;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:75px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(8,8,16,.96);border-top:1px solid rgba(255,255,255,.07);padding:10px 0 16px;display:flex;justify-content:space-around;z-index:100}
+.nb{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;padding:4px 16px;opacity:.35}
+.nb.act{opacity:1}
+.nb-i{font-size:22px;line-height:1}
+.nb-l{font-size:10px;font-weight:500;color:rgba(255,255,255,.3)}
+.nb.act .nb-l{color:#60a5fa}
+.page{display:none}
+.page.act{display:block}
+.hero{margin:14px;background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.hero-lbl{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.hero-amt{font-size:36px;font-weight:500;letter-spacing:-.5px;margin-bottom:14px}
+.live-badge{display:flex;align-items:center;gap:5px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:5px 11px;font-size:11px;color:#4ade80;flex-shrink:0}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.total-card{margin:0 16px 16px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a);border-radius:20px;padding:22px;position:relative;overflow:hidden}
-.total-card::before{content:'';position:absolute;top:-40px;right:-20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
-.tc-label{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
-.tc-amount{font-size:38px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:14px}
-.tc-stats{display:flex;gap:20px}
-.tc-stat-l{font-size:10px;color:rgba(255,255,255,.4);margin-bottom:2px}
-.tc-stat-v{font-size:13px;font-weight:600;color:#fff}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:16px}
-.client-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all .2s}
-.client-card:active{transform:scale(.97)}
-.client-card.active{border-width:2px}
-.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.cc-name{font-size:13px;font-weight:600}
-.cc-badge{font-size:9px;background:rgba(255,255,255,.06);color:var(--muted);padding:2px 6px;border-radius:10px}
-.cc-amount{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
-.cc-mini{width:100%;height:24px}
-.pills{display:flex;gap:6px;padding:0 16px;margin-bottom:14px;flex-wrap:wrap}
-.pill{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:500}
-.pill.active{color:#fff}
-.sec{padding:0 16px;margin-bottom:14px}
-.upload-lbl{display:block;background:var(--surface);border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .2s}
-.upload-lbl:active{border-color:var(--blue);background:rgba(59,130,246,.05)}
-.u-icon{font-size:32px;margin-bottom:8px}
-.u-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.u-sub{font-size:11px;color:var(--muted)}
-.prev-img{width:100%;max-height:220px;object-fit:contain;background:#000;display:block;border-radius:12px;margin-bottom:10px}
+.hero-stats{display:flex;border-top:1px solid rgba(255,255,255,.06);padding-top:12px;margin-bottom:14px}
+.hs{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+.hs:last-child{border:none}
+.hs-l{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:2px}
+.hs-v{font-size:13px;font-weight:500}
+.chart-lbl{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:50px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:3px 3px 0 0;min-height:2px}
+.bar.g{background:#4ade80;opacity:.6}
+.bar.r{background:#f87171;opacity:.6}
+.bar-d{font-size:8px;color:rgba(255,255,255,.25)}
+.sec-hdr{padding:2px 14px 8px;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+.btn-sm{display:flex;align-items:center;gap:4px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);border-radius:20px;padding:4px 10px;font-size:11px;color:#60a5fa;cursor:pointer;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 14px;margin-bottom:14px}
+.cc{background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px;cursor:pointer}
+.cc.g{border-color:rgba(74,222,128,.2)}
+.cc.r{border-color:rgba(248,113,113,.2)}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.cc-name{font-size:12px;font-weight:500}
+.cc-badge{font-size:9px;padding:1px 5px;border-radius:6px}
+.cc-badge.g{background:rgba(74,222,128,.1);color:#4ade80}
+.cc-badge.r{background:rgba(248,113,113,.1);color:#f87171}
+.cc-badge.n{background:rgba(255,255,255,.05);color:rgba(255,255,255,.25)}
+.cc-amt{font-size:18px;font-weight:500;margin-bottom:7px}
+.cc-bar-bg{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-bottom:6px}
+.cc-bar-fill{height:100%;border-radius:2px}
+.cc-week{font-size:9px;color:rgba(255,255,255,.25);margin-bottom:6px}
+.cc-btn{font-size:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:5px;padding:3px;color:rgba(255,255,255,.25);cursor:pointer;text-align:center;width:100%}
+.upload-wrap{margin:0 14px 14px}
+.upload-lbl{display:block;background:#111827;border:1.5px dashed rgba(255,255,255,.1);border-radius:14px;padding:22px;text-align:center;cursor:pointer}
+.upload-icon{width:44px;height:44px;border-radius:12px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:22px}
+.prev-img{width:100%;max-height:200px;object-fit:contain;background:#000;display:block;border-radius:12px;margin-bottom:10px}
 .btn-row{display:flex;gap:8px}
-.btn-p{flex:2;background:var(--blue);border:none;color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
-.btn-p:active{opacity:.8}
-.btn-s{flex:1;background:transparent;border:1px solid var(--border);color:var(--muted);padding:13px;border-radius:12px;font-size:13px;cursor:pointer}
-.proc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
-.proc-title{font-size:14px;font-weight:600;margin-bottom:12px;text-align:center}
-.step{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
+.btn-p{flex:2;background:#60a5fa;border:none;color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-s{flex:1;background:transparent;border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);padding:13px;border-radius:12px;font-size:13px;cursor:pointer}
+.proc{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;text-align:center}
+.proc-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.step{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:rgba(255,255,255,.3);text-align:left}
 .step:last-child{border:none}
-.step.done{color:var(--green)}
-.step.active{color:var(--text);font-weight:600}
+.step.done{color:#4ade80}
+.step.active{color:#f1f5f9;font-weight:500}
 .sdot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.step.done .sdot{background:rgba(34,197,94,.15);color:var(--green)}
-.step.active .sdot{background:rgba(59,130,246,.15);color:var(--blue)}
-.res-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.step.done .sdot{background:rgba(74,222,128,.15);color:#4ade80}
+.step.active .sdot{background:rgba(96,165,250,.15);color:#60a5fa}
+.res-card{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-bottom:10px}
 .res-top{padding:22px;text-align:center}
-.res-top.pr{background:rgba(34,197,94,.08)}
-.res-top.ls{background:rgba(239,68,68,.08)}
-.res-top.pd{background:rgba(251,191,36,.06)}
-.res-lbl{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
-.res-amt{font-size:40px;font-weight:700;margin-bottom:6px}
-.res-status{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
-.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border)}
-.rs{padding:12px 6px;text-align:center;border-right:1px solid var(--border)}
+.res-top.pr{background:rgba(74,222,128,.07)}
+.res-top.ls{background:rgba(248,113,113,.07)}
+.res-top.pd{background:rgba(251,191,36,.05)}
+.res-lbl{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.res-amt{font-size:40px;font-weight:600;margin-bottom:5px;letter-spacing:-.5px}
+.res-status{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid rgba(255,255,255,.06)}
+.rs{padding:12px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
 .rs:last-child{border:none}
-.rs-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
-.rs-v{font-size:13px;font-weight:600}
-.matches-list{padding:12px}
-.mrow{display:flex;gap:10px;align-items:center;padding:9px;background:rgba(255,255,255,.02);border-radius:10px;margin-bottom:5px;border-left:3px solid var(--border)}
+.rs-l{font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.rs-v{font-size:13px;font-weight:500}
+.matches{padding:12px}
+.mrow{display:flex;gap:10px;align-items:center;padding:9px;background:rgba(255,255,255,.02);border-radius:10px;margin-bottom:5px;border-left:3px solid rgba(255,255,255,.08)}
 .mrow.w{border-left-color:#dc2626}
-.mrow.l{border-left-color:var(--green)}
+.mrow.l{border-left-color:#4ade80}
 .mrow.v{border-left-color:#fbbf24}
 .mt{font-size:12px;font-weight:500;margin-bottom:2px}
-.mm{font-size:10px;color:var(--muted)}
+.mm{font-size:10px;color:rgba(255,255,255,.3)}
 .mi{font-size:18px}
-.obs{display:flex;gap:4px;margin-top:5px}
-.ob{flex:1;border:1px solid var(--border);background:transparent;color:var(--muted);padding:3px 4px;border-radius:5px;font-size:9px;cursor:pointer}
-.ob.w{border-color:rgba(220,38,38,.4);color:#f87171}
-.ob.l{border-color:rgba(34,197,94,.4);color:var(--green)}
-.ob.p{border-color:rgba(251,191,36,.4);color:#fbbf24}
-.save-btn{display:block;width:calc(100% - 24px);margin:0 12px 12px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-align:center}
-.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:14px}
-.err-m{font-size:11px;color:rgba(239,68,68,.8);line-height:1.5;margin-bottom:8px}
-.err-c{background:transparent;border:1px solid rgba(239,68,68,.2);color:var(--red);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:rgba(3,7,18,.95);border-top:1px solid var(--border);padding:8px 0;backdrop-filter:blur(20px)}
-.nb{flex:1;background:transparent;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;opacity:.4}
-.nb.active{opacity:1}
-.nb-i{font-size:22px}
-.nb-l{font-size:9px;font-weight:500;color:var(--muted)}
-.nb.active .nb-l{color:var(--blue)}
-.page{display:none;padding:0}
-.page.active{display:block}
-.live-match{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 10px}
-.lm-hdr{display:flex;justify-content:space-between;margin-bottom:10px}
-.lm-live{font-size:10px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px}
-.lm-league{font-size:10px;color:var(--muted)}
-.lm-score{display:flex;justify-content:space-between;align-items:center}
-.lm-team{font-size:13px;font-weight:600}
-.lm-result{font-size:26px;font-weight:700;letter-spacing:-1px}
-.hist-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 8px;cursor:pointer}
-.hist-top{display:flex;justify-content:space-between;margin-bottom:6px}
-.hist-matches{font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.5}
-.hist-bottom{display:flex;justify-content:space-between;align-items:center}
-.hist-amount{font-size:16px;font-weight:700}
-.slip-img{width:100%;border-radius:10px;margin-top:10px;max-height:200px;object-fit:contain;background:#000}
-.client-detail{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 14px}
-.cd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.cd-name{font-size:16px;font-weight:700}
-.cd-back{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.stat-box{background:var(--card);border-radius:10px;padding:10px;text-align:center}
-.stat-l{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-.stat-v{font-size:16px;font-weight:700}
+.obs{display:flex;gap:3px;margin-top:5px}
+.ob{flex:1;border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(255,255,255,.3);padding:3px;border-radius:5px;font-size:9px;cursor:pointer}
+.ob.w{border-color:rgba(220,38,38,.3);color:#f87171}
+.ob.l{border-color:rgba(74,222,128,.3);color:#4ade80}
+.ob.p{border-color:rgba(251,191,36,.3);color:#fbbf24}
+.save-btn{display:block;width:calc(100% - 24px);margin:0 12px 12px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ade80;padding:12px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
+.err{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.18);border-radius:12px;padding:14px}
+.err-m{font-size:11px;color:rgba(248,113,113,.85);line-height:1.5;margin-bottom:8px}
+.err-c{background:transparent;border:1px solid rgba(248,113,113,.2);color:#f87171;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px}
+.cp-hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 14px 12px}
+.cp-back{background:transparent;border:none;color:rgba(255,255,255,.3);font-size:13px;cursor:pointer}
+.cp-name{font-size:16px;font-weight:500}
+.cp-actions{display:flex;gap:6px}
+.cp-act-btn{background:transparent;border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);padding:5px 10px;border-radius:8px;cursor:pointer;font-size:11px}
+.cp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 14px;margin-bottom:12px}
+.cp-stat{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center}
+.cp-stat-l{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:3px}
+.cp-stat-v{font-size:15px;font-weight:500}
+.cp-chart{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;margin:0 14px 12px}
+.slip-item{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:11px;margin:0 14px 6px}
+.slip-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.slip-matches{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px;line-height:1.5}
+.slip-bottom{display:flex;justify-content:space-between;align-items:center}
+.slip-meta{font-size:10px;color:rgba(255,255,255,.18)}
+.slip-tag{font-size:10px;padding:2px 8px;border-radius:8px}
+.slip-tag.g{background:rgba(74,222,128,.1);color:#4ade80}
+.slip-tag.r{background:rgba(248,113,113,.1);color:#f87171}
+.slip-tag.p{background:rgba(251,191,36,.1);color:#fbbf24}
+.slip-del{width:24px;height:24px;border-radius:6px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.12);color:rgba(248,113,113,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex-shrink:0}
+.slip-img{width:100%;border-radius:8px;margin-top:8px;max-height:200px;object-fit:contain;background:#000}
+.live-card{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px;margin:0 14px 8px}
+.lc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lc-live{display:flex;align-items:center;gap:4px;font-size:10px;color:#f87171;font-weight:600}
+.lc-lg{font-size:10px;color:rgba(255,255,255,.3)}
+.lc-score{display:flex;justify-content:space-between;align-items:center}
+.lc-team{font-size:13px;font-weight:500;max-width:110px}
+.lc-result{font-size:26px;font-weight:600;letter-spacing:-1px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:#13151f;border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:16px;text-align:center}
+.field{margin-bottom:12px}
+.field label{font-size:11px;color:rgba(255,255,255,.3);display:block;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase}
+.field input,.field textarea,.field select{width:100%;background:#111827;border:1px solid rgba(255,255,255,.07);color:#f1f5f9;padding:10px 12px;border-radius:10px;font-size:14px;outline:none;font-family:inherit}
+.field textarea{resize:none;height:70px}
+.colors{display:flex;gap:8px;flex-wrap:wrap}
+.color-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.color-opt.sel{border-color:#fff}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.modal-btn{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none}
+.modal-btn.primary{background:#60a5fa;color:#fff}
+.modal-btn.danger{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.modal-btn.cancel{background:#111827;color:rgba(255,255,255,.3)}
+.btn-manual{width:100%;background:transparent;border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);padding:11px;border-radius:12px;font-size:13px;cursor:pointer;margin-top:8px}
 </style>
 </head>
 <body>
 
-<div id="pg-upload" class="page active">
-<div class="hdr">
-  <div class="logo">📋 Залог Система</div>
-  <div class="live-badge"><div class="dot"></div><span id="ws-status">Live</span></div>
-</div>
-<div class="total-card">
-  <div class="tc-label">Общо всички клиенти</div>
-  <div class="tc-amount" id="total-amount">+0 лв.</div>
-  <div class="tc-stats">
-    <div><div class="tc-stat-l">Днес</div><div class="tc-stat-v" id="today-count">0 фиша</div></div>
-    <div><div class="tc-stat-l">Win Rate</div><div class="tc-stat-v" id="win-rate">—</div></div>
-    <div><div class="tc-stat-l">Общо фишове</div><div class="tc-stat-v" id="total-slips">0</div></div>
-  </div>
-</div>
-<div class="grid2" id="clients-grid"></div>
-<div class="pills" id="client-pills"></div>
-<div class="sec">
-  <div id="u-box">
-    <label class="upload-lbl" for="file-in">
-      <div class="u-icon">📷</div>
-      <div class="u-title">Качи снимка на фиш</div>
-      <div class="u-sub">bet365 · PNG · JPG · HEIC</div>
-    </label>
-    <input type="file" id="file-in" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
-  </div>
-  <div id="u-prev" style="display:none">
-    <img id="prev-img" class="prev-img" src="" alt="">
-    <div class="btn-row">
-      <button class="btn-p" onclick="analyze()">⚡ АНАЛИЗИРАЙ И ЗАПИШИ</button>
-      <button class="btn-s" onclick="resetUpload()">✕</button>
+<div id="pg-upload" class="page act">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <div class="hero-lbl">Общо всички клиенти</div>
+        <div class="hero-amt" id="total-amt">+0 лв.</div>
+      </div>
+      <div class="live-badge"><div class="live-dot"></div>На живо</div>
     </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-l">Win rate</div><div class="hs-v" id="win-rate">—</div></div>
+      <div class="hs"><div class="hs-l">Фишове</div><div class="hs-v" id="total-slips">0</div></div>
+      <div class="hs"><div class="hs-l">Риск</div><div class="hs-v" id="exposure" style="color:#fbbf24">0 лв.</div></div>
+      <div class="hs"><div class="hs-l">Загуби</div><div class="hs-v" id="total-losses" style="color:#f87171">0</div></div>
+    </div>
+    <div class="chart-lbl">Последните 14 дни</div>
+    <div class="bars" id="main-chart"></div>
   </div>
-  <div id="u-proc" style="display:none">
-    <div class="proc"><div class="proc-title">Обработвам фиша...</div><div id="steps-el"></div></div>
+  <div class="sec-hdr">
+    <div class="sec-title">Клиенти</div>
+    <button class="btn-sm" onclick="openAddClient()">+ Нов клиент</button>
   </div>
-  <div id="u-err" style="display:none">
-    <div class="err"><div class="err-m" id="err-m"></div><button class="err-c" onclick="document.getElementById('u-err').style.display='none'">Затвори</button></div>
+  <div class="grid2" id="clients-grid"></div>
+  <div class="upload-wrap">
+    <div id="u-box">
+      <label class="upload-lbl" for="fin">
+        <div class="upload-icon">📷</div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:4px">Качи снимка на фиш</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.3)">bet365 · PNG · JPG · HEIC</div>
+      </label>
+      <input type="file" id="fin" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
+      <button class="btn-manual" onclick="openManual()">+ Добави ръчно</button>
+    </div>
+    <div id="u-prev" style="display:none">
+      <img id="prev-img" class="prev-img" src="" alt="">
+      <div class="sec-hdr" style="padding:0 0 8px"><div class="sec-title">Клиент</div></div>
+      <div id="sel-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+      <div class="btn-row">
+        <button class="btn-p" onclick="analyze()">⚡ АНАЛИЗИРАЙ И ЗАПИШИ</button>
+        <button class="btn-s" onclick="resetUpload()">✕</button>
+      </div>
+    </div>
+    <div id="u-proc" style="display:none">
+      <div class="proc"><div class="proc-title">Обработвам фиша...</div><div id="steps-el"></div></div>
+    </div>
+    <div id="u-err" style="display:none">
+      <div class="err"><div class="err-m" id="err-m"></div><button class="err-c" onclick="showEl('u-err',false)">Затвори</button></div>
+    </div>
+    <div id="u-res" style="display:none"></div>
   </div>
-  <div id="u-res" style="display:none"></div>
-</div>
 </div>
 
 <div id="pg-live" class="page">
-<div class="hdr"><div class="logo">🔴 На живо</div><div class="live-badge"><div class="dot"></div>Auto 30s</div></div>
-<div id="live-content"><div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div></div>
+  <div style="padding:16px 14px 8px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:16px;font-weight:500">На живо</div>
+    <button class="btn-sm" onclick="loadLive()">↻ Обнови</button>
+  </div>
+  <div id="live-content"><div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Зарежда...</div></div>
 </div>
 
 <div id="pg-history" class="page">
-<div class="hdr"><div class="logo">📋 История</div></div>
-<div id="history-content"><div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div></div>
+  <div style="padding:16px 14px 8px;font-size:16px;font-weight:500">История</div>
+  <div id="hist-content"></div>
 </div>
 
 <div id="pg-client" class="page">
-<div class="hdr"><div class="logo" id="client-page-name">Клиент</div></div>
-<div id="client-detail-content"></div>
+  <div class="cp-hdr">
+    <button class="cp-back" onclick="showPage('upload')">← Назад</button>
+    <div class="cp-name" id="cp-name">Клиент</div>
+    <div class="cp-actions">
+      <button class="cp-act-btn" onclick="openEditClient()">Редактирай</button>
+    </div>
+  </div>
+  <div class="cp-stats">
+    <div class="cp-stat"><div class="cp-stat-l">Баланс</div><div class="cp-stat-v" id="cp-bal">0</div></div>
+    <div class="cp-stat"><div class="cp-stat-l">Тотал</div><div class="cp-stat-v" id="cp-total">0</div></div>
+    <div class="cp-stat"><div class="cp-stat-l">Фишове</div><div class="cp-stat-v" id="cp-slips">0</div></div>
+  </div>
+  <div class="cp-chart">
+    <div style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Прогрес по дни</div>
+    <div class="bars" id="client-chart"></div>
+  </div>
+  <div style="padding:0 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase">История</div>
+    <div style="display:flex;gap:6px">
+      <button class="cp-act-btn" onclick="openSettle()">Нулирай сметка</button>
+      <button class="cp-act-btn" style="color:#f87171;border-color:rgba(248,113,113,.2)" onclick="deleteClient()">Изтрий</button>
+    </div>
+  </div>
+  <div id="client-slips"></div>
 </div>
 
 <nav class="nav">
-  <button class="nb active" id="nb-upload" onclick="showPage('upload')"><div class="nb-i">📷</div><div class="nb-l" style="color:var(--blue)">Фиш</div></button>
-  <button class="nb" id="nb-live" onclick="showPage('live')"><div class="nb-i">🔴</div><div class="nb-l">На живо</div></button>
-  <button class="nb" id="nb-history" onclick="showPage('history')"><div class="nb-i">📋</div><div class="nb-l">История</div></button>
+  <button class="nb act" id="nb-upload" onclick="showPage('upload')">
+    <span class="nb-i">📷</span><span class="nb-l" style="color:#60a5fa">Фиш</span>
+  </button>
+  <button class="nb" id="nb-live" onclick="showPage('live')">
+    <span class="nb-i">🔴</span><span class="nb-l">На живо</span>
+  </button>
+  <button class="nb" id="nb-history" onclick="showPage('history')">
+    <span class="nb-i">📋</span><span class="nb-l">История</span>
+  </button>
 </nav>
+
+<div id="modal-overlay" style="display:none" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
 <script>
 var CLIENTS = [];
-var selClient = null;
+var selClientForUpload = null;
+var curClient = null;
 var imgFile = null;
 var curResult = null;
+var ws;
+
+var COLORS = ['#3b82f6','#f59e0b','#f97316','#ef4444','#8b5cf6','#06b6d4','#10b981','#ec4899','#f43f5e','#84cc16'];
 
 // WebSocket
-var ws;
 function connectWS() {
-  var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  ws = new WebSocket(proto + '//' + location.host);
-  ws.onopen = function() { document.getElementById('ws-status').textContent = 'Live'; };
-  ws.onclose = function() { document.getElementById('ws-status').textContent = 'Офлайн'; setTimeout(connectWS, 3000); };
-  ws.onmessage = function(e) {
-    var d = JSON.parse(e.data);
-    if (d.type === 'new_slip' || d.type === 'slip_resolved' || d.type === 'slip_updated') {
-      loadDashboard();
-    }
-  };
+  try {
+    var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(proto + '//' + location.host);
+    ws.onclose = function() { setTimeout(connectWS, 3000); };
+    ws.onerror = function() {};
+    ws.onmessage = function(e) {
+      try {
+        var d = JSON.parse(e.data);
+        var types = ['new_slip','slip_graded','slip_updated','slip_deleted','client_added','client_updated','client_deleted','client_settled'];
+        if (types.indexOf(d.type) !== -1) {
+          loadDashboard();
+          if (curClient && String(d.client_id) === String(curClient.id)) {
+            loadClientSlips(curClient.id);
+          }
+        }
+      } catch(ex) {}
+    };
+  } catch(err) { setTimeout(connectWS, 3000); }
 }
 connectWS();
 
 // Pages
 function showPage(p) {
-  ['upload','live','history','client'].forEach(function(x) {
-    document.getElementById('pg-'+x).className = 'page' + (x===p?' active':'');
+  var pages = ['upload','live','history','client'];
+  for (var i = 0; i < pages.length; i++) {
+    var x = pages[i];
+    document.getElementById('pg-'+x).className = 'page' + (x === p ? ' act' : '');
     var nb = document.getElementById('nb-'+x);
-    if (nb) nb.className = 'nb' + (x===p?' active':'');
-  });
-  if (p==='live') loadLive();
-  if (p==='history') loadHistory();
+    if (nb) nb.className = 'nb' + (x === p ? ' act' : '');
+  }
+  if (p === 'live') loadLive();
+  if (p === 'history') loadHistory();
+}
+
+function showEl(id, v) {
+  document.getElementById(id).style.display = v ? 'block' : 'none';
 }
 
 // Dashboard
-async function loadDashboard() {
-  try {
-    var r = await fetch('/api/clients');
-    CLIENTS = await r.json();
-    var totalAll = CLIENTS.reduce(function(s,c){return s+Number(c.balance||0);}, 0);
-    var totalSlips = CLIENTS.reduce(function(s,c){return s+Number(c.total_slips||0);}, 0);
-    var totalWins = CLIENTS.reduce(function(s,c){return s+Number(c.wins||0);}, 0);
-    var totalLosses = CLIENTS.reduce(function(s,c){return s+Number(c.losses||0);}, 0);
+function loadDashboard() {
+  fetch('/api/clients').then(function(r) { return r.json(); }).then(function(data) {
+    CLIENTS = data;
+    var totalAmt = 0, totalSlips = 0, totalWins = 0, totalLosses = 0;
+    for (var i = 0; i < CLIENTS.length; i++) {
+      totalAmt += Number(CLIENTS[i].balance || 0);
+      totalSlips += Number(CLIENTS[i].total_slips || 0);
+      totalWins += Number(CLIENTS[i].wins || 0);
+      totalLosses += Number(CLIENTS[i].losses || 0);
+    }
     var tot = totalWins + totalLosses;
-    document.getElementById('total-amount').textContent = (totalAll>=0?'+':'') + Math.round(totalAll) + ' лв.';
+    var amtEl = document.getElementById('total-amt');
+    amtEl.textContent = (totalAmt >= 0 ? '+' : '') + Math.round(totalAmt) + ' лв.';
+    amtEl.style.color = totalAmt >= 0 ? '#4ade80' : '#f87171';
     document.getElementById('total-slips').textContent = totalSlips;
-    document.getElementById('win-rate').textContent = tot>0 ? Math.round(totalWins/tot*100)+'%' : '—';
-    renderClientCards();
-  } catch(e) { console.error(e); }
+    document.getElementById('win-rate').textContent = tot > 0 ? Math.round(totalWins/tot*100) + '%' : '—';
+    document.getElementById('total-losses').textContent = totalLosses;
+    renderClients();
+    updateSelPills();
+    loadMainChart();
+    loadExposure();
+  }).catch(function() {});
 }
 
-function renderClientCards() {
+function loadExposure() {
+  fetch('/api/exposure').then(function(r) { return r.json(); }).then(function(data) {
+    var total = 0;
+    for (var i = 0; i < data.length; i++) total += Number(data[i].exposure || 0);
+    document.getElementById('exposure').textContent = Math.round(total) + ' лв.';
+  }).catch(function() {});
+}
+
+function renderClients() {
   var grid = document.getElementById('clients-grid');
-  var pills = document.getElementById('client-pills');
-  grid.innerHTML = ''; pills.innerHTML = '';
-  CLIENTS.forEach(function(c) {
-    var isActive = selClient && selClient.id === c.id;
-    var card = document.createElement('div');
-    card.className = 'client-card' + (isActive?' active':'');
-    if (isActive) card.style.borderColor = c.color;
-    card.innerHTML = '<div class="cc-top"><div class="cc-name" style="color:'+(isActive?c.color:'#94a3b8')+'">'+c.name+'</div><div class="cc-badge">'+c.wins+'W/'+c.losses+'L</div></div><div class="cc-amount" style="color:'+(Number(c.balance)>=0?(isActive?c.color:'#f1f5f9'):'#ef4444')+'">'+(Number(c.balance)>=0?'+':'')+Math.round(Number(c.balance))+' лв.</div>';
-    card.onclick = function() { showClientDetail(c); };
-    grid.appendChild(card);
-    var pill = document.createElement('button');
-    pill.className = 'pill' + (isActive?' active':'');
-    if (isActive) { pill.style.background = c.color; pill.style.borderColor = c.color; pill.style.color = '#fff'; }
-    pill.textContent = c.name;
-    pill.onclick = function() { selClient = c; renderClientCards(); };
-    pills.appendChild(pill);
-  });
-  if (!selClient && CLIENTS.length) selClient = CLIENTS[0];
+  grid.innerHTML = '';
+  for (var i = 0; i < CLIENTS.length; i++) {
+    var c = CLIENTS[i];
+    var bal = Number(c.balance || 0);
+    var tot = Number(c.total || 0);
+    var cls = bal > 0 ? 'g' : bal < 0 ? 'r' : '';
+    var nameColor = bal > 0 ? '#4ade80' : bal < 0 ? '#f87171' : 'rgba(255,255,255,.3)';
+    var div = document.createElement('div');
+    div.className = 'cc' + (cls ? ' ' + cls : '');
+    div.innerHTML = '<div class="cc-top">' +
+      '<div class="cc-name" style="color:' + nameColor + '">' + c.name + '</div>' +
+      '<span class="cc-badge ' + (cls || 'n') + '">' + c.wins + 'W·' + c.losses + 'L</span>' +
+      '</div>' +
+      '<div class="cc-amt" style="color:' + nameColor + '">' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.</div>' +
+      '<div class="cc-bar-bg"><div class="cc-bar-fill" style="width:' + Math.min(100, Math.abs(bal)/10) + '%;background:' + (bal >= 0 ? '#4ade80' : '#f87171') + ';opacity:.3"></div></div>' +
+      '<div class="cc-week">Тотал: <span style="color:' + (tot >= 0 ? '#4ade80' : '#f87171') + '">' + (tot >= 0 ? '+' : '') + Math.round(tot) + ' лв.</span></div>' +
+      '<button class="cc-btn" onclick="event.stopPropagation();confirmSettle(' + c.id + ')">Нулирай сметка</button>';
+    (function(client) {
+      div.onclick = function() { openClientPage(client); };
+    })(c);
+    grid.appendChild(div);
+  }
 }
 
-function showClientDetail(client) {
+function loadMainChart() {
+  fetch('/api/chart').then(function(r) { return r.json(); }).then(function(data) {
+    renderBars('main-chart', data);
+  }).catch(function() {});
+}
+
+function renderBars(id, data) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (!data || !data.length) {
+    el.innerHTML = '<div style="color:rgba(255,255,255,.3);font-size:11px;text-align:center;width:100%">Няма данни</div>';
+    return;
+  }
+  var max = 1;
+  for (var i = 0; i < data.length; i++) {
+    var v = Math.abs(Number(data[i].amount || 0));
+    if (v > max) max = v;
+  }
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var amt = Number(data[i].amount || 0);
+    var h = Math.max(2, Math.round((Math.abs(amt)/max)*48));
+    var cls = amt >= 0 ? 'g' : 'r';
+    var day = data[i].date ? String(data[i].date).slice(8) : '';
+    html += '<div class="bar-col"><div class="bar ' + cls + '" style="height:' + h + 'px"></div><div class="bar-d">' + day + '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+// Client page
+function openClientById(id) {
+  var c = null;
+  for (var i = 0; i < CLIENTS.length; i++) {
+    if (CLIENTS[i].id === id) { c = CLIENTS[i]; break; }
+  }
+  if (c) openClientPage(c);
+}
+
+function openClientPage(c) {
+  curClient = c;
   showPage('client');
-  document.getElementById('client-page-name').textContent = client.name;
-  document.getElementById('client-detail-content').innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div>';
-  fetch('/api/clients/'+client.id+'/slips').then(function(r){return r.json();}).then(function(slips) {
-    var bal = slips.reduce(function(s,x){return s+(x.is_profit?Number(x.our_amount):-Number(x.our_amount));},0);
-    var wins = slips.filter(function(s){return s.result==='LOSS';}).length;
-    var losses = slips.filter(function(s){return s.result==='WIN';}).length;
-    var html = '<div class="client-detail"><div class="cd-top"><div class="cd-name" style="color:'+client.color+'">'+client.name+'</div><button class="cd-back" onclick="showPage(\'upload\')">← Назад</button></div>';
-    html += '<div class="stat-grid">';
-    html += '<div class="stat-box"><div class="stat-l">Баланс</div><div class="stat-v" style="color:'+(bal>=0?'#22c55e':'#ef4444')+'">'+(bal>=0?'+':'')+Math.round(bal)+' лв.</div></div>';
-    html += '<div class="stat-box"><div class="stat-l">Печелим</div><div class="stat-v" style="color:#22c55e">'+wins+'</div></div>';
-    html += '<div class="stat-box"><div class="stat-l">Губим</div><div class="stat-v" style="color:#ef4444">'+losses+'</div></div>';
-    html += '</div></div>';
-    html += '<div style="padding:0 16px;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">История</div>';
-    slips.forEach(function(s) {
-      var ms = (s.matches||[]).map(function(m){return m.display+(m.result==='WIN'?' ❌':m.result==='LOSS'?' ✅':' ⏳');}).join(' · ');
-      html += '<div class="hist-item" onclick="toggleSlipImg(this,\''+s.image_path+'\')">';
-      html += '<div class="hist-top"><span style="font-size:11px;color:var(--muted)">'+s.date+'</span><span style="font-size:10px;background:rgba(255,255,255,.06);padding:2px 7px;border-radius:10px;color:var(--muted)">'+s.total_odds+'x</span></div>';
-      html += '<div class="hist-matches">'+ms+'</div>';
-      html += '<div class="hist-bottom"><span class="hist-amount" style="color:'+(s.is_profit?'#22c55e':'#ef4444')+'">'+(s.is_profit?'+':'-')+Math.round(Number(s.our_amount))+' лв.</span><span style="font-size:10px;color:var(--muted)">'+Math.round(Number(s.stake))+' лв. залог</span></div>';
+  var bal = Number(c.balance || 0);
+  var tot = Number(c.total || 0);
+  document.getElementById('cp-name').textContent = c.name;
+  document.getElementById('cp-name').style.color = bal >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('cp-bal').textContent = (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.';
+  document.getElementById('cp-bal').style.color = bal >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('cp-total').textContent = (tot >= 0 ? '+' : '') + Math.round(tot) + ' лв.';
+  document.getElementById('cp-total').style.color = tot >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('cp-slips').textContent = c.total_slips || 0;
+  fetch('/api/clients/' + c.id + '/chart').then(function(r) { return r.json(); }).then(function(data) {
+    renderBars('client-chart', data);
+  }).catch(function() {});
+  loadClientSlips(c.id);
+}
+
+function loadClientSlips(clientId) {
+  fetch('/api/clients/' + clientId + '/slips').then(function(r) { return r.json(); }).then(function(slips) {
+    var el = document.getElementById('client-slips');
+    if (!slips || !slips.length) {
+      el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Няма фишове</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < slips.length; i++) {
+      var s = slips[i];
+      var isP = s.is_profit;
+      var isPend = s.result === 'PENDING';
+      var amtColor = isPend ? '#fbbf24' : isP ? '#4ade80' : '#f87171';
+      var amtText = isPend ? '⏳' : ((isP ? '+' : '-') + Math.round(Number(s.our_amount)) + ' лв.');
+      var tagCls = isPend ? 'p' : isP ? 'g' : 'r';
+      var tagTxt = isPend ? 'Изчакване' : isP ? 'Загубен фиш' : 'Спечелен фиш';
+      var ms = '';
+      var matches = s.matches || [];
+      for (var j = 0; j < matches.length; j++) {
+        var m = matches[j];
+        var icon = m.result === 'WIN' ? ' ❌' : m.result === 'LOSS' ? ' ✅' : m.result === 'LIVE' ? ' 🔴' : ' ⏳';
+        if (ms) ms += ' · ';
+        ms += (m.display || '') + icon;
+      }
+      var dateStr = s.slip_date || (s.created_at ? String(s.created_at).slice(0,10) : '');
+      html += '<div class="slip-item" id="slip-' + s.id + '">' +
+        '<div class="slip-top">' +
+        '<div style="font-size:11px;color:rgba(255,255,255,.4)">' + dateStr + ' · x' + s.total_odds + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="font-size:16px;font-weight:500;color:' + amtColor + '">' + amtText + '</div>' +
+        '<div class="slip-del" onclick="deleteSlip(' + s.id + ')">🗑</div>' +
+        '</div></div>' +
+        '<div class="slip-matches">' + (ms || '—') + '</div>' +
+        '<div class="slip-bottom">' +
+        '<div class="slip-meta">' + Math.round(Number(s.stake)) + ' лв. залог</div>' +
+        '<span class="slip-tag ' + tagCls + '">' + tagTxt + '</span>' +
+        '</div>';
+      if (s.image_path && s.image_path !== 'null') {
+        html += '<img src="' + s.image_path + '" class="slip-img" loading="lazy" onclick="toggleImgSize(this)" alt="фиш">';
+      }
       html += '</div>';
-    });
-    if (!slips.length) html += '<div style="text-align:center;color:var(--muted);padding:30px">Няма фишове</div>';
-    document.getElementById('client-detail-content').innerHTML = html;
+    }
+    el.innerHTML = html;
+  }).catch(function() {});
+}
+
+function toggleImgSize(img) {
+  img.style.maxHeight = img.style.maxHeight === 'none' ? '200px' : 'none';
+}
+
+function deleteSlip(id) {
+  if (!confirm('Изтрий фиша?')) return;
+  fetch('/api/slips/' + id, {method:'DELETE'}).then(function() {
+    var el = document.getElementById('slip-' + id);
+    if (el) el.remove();
+    loadDashboard();
   });
 }
 
-function toggleSlipImg(el, imgPath) {
-  var existing = el.querySelector('.slip-img');
-  if (existing) { existing.remove(); return; }
-  if (!imgPath || imgPath === 'null') return;
-  var img = document.createElement('img');
-  img.className = 'slip-img';
-  img.src = imgPath;
-  el.appendChild(img);
+// Edit client
+function openEditClient() {
+  if (!curClient) return;
+  var c = curClient;
+  var colorHtml = '';
+  for (var i = 0; i < COLORS.length; i++) {
+    var col = COLORS[i];
+    colorHtml += '<div class="color-opt' + (col === c.color ? ' sel' : '') + '" data-color="' + col + '" style="background:' + col + '" onclick="selectColor(this,\'edit-colors\')"></div>';
+  }
+  openModal('Редактирай клиент',
+    '<div class="field"><label>Име</label><input id="edit-name" value="' + c.name + '" placeholder="Румен"></div>' +
+    '<div class="field"><label>Цвят</label><div class="colors" id="edit-colors">' + colorHtml + '</div></div>' +
+    '<div class="field"><label>Бележки</label><textarea id="edit-notes" placeholder="Телефон, бележки...">' + (c.notes || '') + '</textarea></div>' +
+    '<div class="modal-btns">' +
+    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button class="modal-btn primary" onclick="saveEditClient(' + c.id + ')">Запази</button>' +
+    '</div>'
+  );
+}
+
+function saveEditClient(id) {
+  var name = document.getElementById('edit-name').value.replace(/^\s+|\s+$/g, '');
+  var notes = document.getElementById('edit-notes').value;
+  var selColor = document.querySelector('.color-opt.sel');
+  var color = selColor ? selColor.getAttribute('data-color') : '#3b82f6';
+  if (!name) return;
+  fetch('/api/clients/' + id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name,color:color,notes:notes})
+  }).then(function(r) { return r.json(); }).then(function(updated) {
+    curClient = updated;
+    closeModal();
+    openClientPage(curClient);
+    loadDashboard();
+  });
+}
+
+function deleteClient() {
+  if (!curClient) return;
+  if (!confirm('Изтрий клиент ' + curClient.name + '? Всички фишове ще се изтрият.')) return;
+  fetch('/api/clients/' + curClient.id, {method:'DELETE'}).then(function() {
+    showPage('upload');
+    loadDashboard();
+  });
+}
+
+function openSettle() {
+  if (!curClient) return;
+  var bal = Number(curClient.balance || 0);
+  openModal('Нулирай сметка',
+    '<div style="text-align:center;margin-bottom:16px">' +
+    '<div style="font-size:13px;color:rgba(255,255,255,.3);margin-bottom:6px">Текущ баланс на ' + curClient.name + '</div>' +
+    '<div style="font-size:28px;font-weight:500;color:' + (bal >= 0 ? '#4ade80' : '#f87171') + '">' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.</div>' +
+    '</div>' +
+    '<div class="field"><label>Бележка</label><input id="settle-notes" placeholder="Платено в брой..."></div>' +
+    '<div class="modal-btns">' +
+    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button class="modal-btn primary" onclick="doSettle()">Нулирай</button>' +
+    '</div>'
+  );
+}
+
+function doSettle() {
+  var notesEl = document.getElementById('settle-notes');
+  var notes = notesEl ? notesEl.value : '';
+  fetch('/api/clients/' + curClient.id + '/settle', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({notes:notes})
+  }).then(function() {
+    closeModal();
+    loadDashboard();
+    if (curClient) openClientPage(curClient);
+  });
+}
+
+function confirmSettle(id) {
+  var c = null;
+  for (var i = 0; i < CLIENTS.length; i++) {
+    if (CLIENTS[i].id === id) { c = CLIENTS[i]; break; }
+  }
+  if (!c) return;
+  var bal = Number(c.balance || 0);
+  if (!confirm('Нулирай сметката на ' + c.name + '? Баланс: ' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.')) return;
+  fetch('/api/clients/' + id + '/settle', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})}).then(function() {
+    loadDashboard();
+  });
+}
+
+// Add client
+function openAddClient() {
+  var colorHtml = '';
+  for (var i = 0; i < COLORS.length; i++) {
+    var col = COLORS[i];
+    colorHtml += '<div class="color-opt' + (i === 0 ? ' sel' : '') + '" data-color="' + col + '" style="background:' + col + '" onclick="selectColor(this,\'new-colors\')"></div>';
+  }
+  openModal('Нов клиент',
+    '<div class="field"><label>Име</label><input id="new-name" placeholder="Румен"></div>' +
+    '<div class="field"><label>Цвят</label><div class="colors" id="new-colors">' + colorHtml + '</div></div>' +
+    '<div class="modal-btns">' +
+    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button class="modal-btn primary" onclick="saveNewClient()">Добави</button>' +
+    '</div>'
+  );
+}
+
+function saveNewClient() {
+  var name = document.getElementById('new-name').value.replace(/^\s+|\s+$/g, '');
+  var selColor = document.querySelector('.color-opt.sel');
+  var color = selColor ? selColor.getAttribute('data-color') : '#3b82f6';
+  if (!name) return;
+  fetch('/api/clients', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name,color:color})
+  }).then(function() {
+    closeModal();
+    loadDashboard();
+  });
+}
+
+function selectColor(el, containerId) {
+  var opts = document.querySelectorAll('#' + containerId + ' .color-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('sel');
+  el.classList.add('sel');
+}
+
+// Modal
+function openModal(title, body) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').style.display = 'none';
 }
 
 // Upload
-document.getElementById('file-in').addEventListener('change', function(e) {
+document.getElementById('fin').addEventListener('change', function(e) {
   var file = e.target.files && e.target.files[0];
   if (!file) return;
   imgFile = file;
   var reader = new FileReader();
   reader.onload = function(ev) {
     document.getElementById('prev-img').src = ev.target.result;
-    show('u-box', false); show('u-prev', true); show('u-proc', false); show('u-res', false); show('u-err', false);
+    showEl('u-box', false);
+    showEl('u-prev', true);
+    showEl('u-proc', false);
+    showEl('u-res', false);
+    showEl('u-err', false);
+    if (!selClientForUpload && CLIENTS.length) selClientForUpload = CLIENTS[0];
+    updateSelPills();
   };
   reader.readAsDataURL(file);
 });
 
-function show(id, v) { document.getElementById(id).style.display = v ? 'block' : 'none'; }
-function resetUpload() {
-  imgFile = null; document.getElementById('file-in').value = '';
-  show('u-box', true); show('u-prev', false); show('u-proc', false); show('u-res', false); show('u-err', false);
+function pickClient(id) {
+  for (var i = 0; i < CLIENTS.length; i++) {
+    if (CLIENTS[i].id === id) { selClientForUpload = CLIENTS[i]; break; }
+  }
+  updateSelPills();
 }
-function showErr(msg) { document.getElementById('err-m').textContent = msg; show('u-err', true); show('u-proc', false); show('u-prev', true); }
+
+function updateSelPills() {
+  var el = document.getElementById('sel-pills');
+  if (!el) return;
+  var html = '';
+  for (var i = 0; i < CLIENTS.length; i++) {
+    var c = CLIENTS[i];
+    var isSel = selClientForUpload && selClientForUpload.id === c.id;
+    html += '<button onclick="pickClient(' + c.id + ')" style="padding:6px 14px;border-radius:20px;border:1px solid ' +
+      (isSel ? c.color : 'rgba(255,255,255,.07)') +
+      ';background:' + (isSel ? 'rgba(0,0,0,.2)' : 'transparent') +
+      ';color:' + (isSel ? c.color : 'rgba(255,255,255,.3)') +
+      ';font-size:12px;cursor:pointer">' + c.name + '</button>';
+  }
+  el.innerHTML = html;
+}
+
+function resetUpload() {
+  imgFile = null;
+  document.getElementById('fin').value = '';
+  showEl('u-box', true);
+  showEl('u-prev', false);
+  showEl('u-proc', false);
+  showEl('u-res', false);
+  showEl('u-err', false);
+}
+
+function showErr(msg) {
+  document.getElementById('err-m').textContent = msg;
+  showEl('u-err', true);
+  showEl('u-proc', false);
+  showEl('u-prev', false);
+  showEl('u-box', true);
+}
 
 function setSteps(done, active) {
   var defs = [['vision','GPT-4o Vision чете фиша'],['sports','Проверка на резултатите'],['calc','Изчисляване'],['save','Записване']];
-  document.getElementById('steps-el').innerHTML = defs.map(function(s) {
-    var d = done.indexOf(s[0]) !== -1, a = s[0] === active;
-    return '<div class="step'+(d?' done':a?' active':'')+'"><div class="sdot">'+(d?'✓':a?'…':'○')+'</div>'+s[1]+'</div>';
-  }).join('');
+  var html = '';
+  for (var i = 0; i < defs.length; i++) {
+    var s = defs[i];
+    var d = done.indexOf(s[0]) !== -1;
+    var a = s[0] === active;
+    html += '<div class="step' + (d ? ' done' : a ? ' active' : '') + '">' +
+      '<div class="sdot">' + (d ? '✓' : a ? '…' : '○') + '</div>' + s[1] + '</div>';
+  }
+  document.getElementById('steps-el').innerHTML = html;
 }
 
-async function analyze() {
+function analyze() {
   if (!imgFile) { showErr('Няма снимка'); return; }
-  if (!selClient) { showErr('Избери клиент'); return; }
-  show('u-prev', false); show('u-proc', true); show('u-res', false); show('u-err', false);
+  if (!selClientForUpload) { showErr('Избери клиент'); return; }
+  showEl('u-prev', false);
+  showEl('u-proc', true);
+  showEl('u-res', false);
+  showEl('u-err', false);
   var done = [];
-  try {
-    setSteps(done, 'vision');
-    var fd = new FormData();
-    fd.append('image', imgFile);
-    fd.append('client_id', selClient.id);
-    setSteps(done, 'sports');
-    var r = await fetch('/api/analyze', { method: 'POST', body: fd });
-    var data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Сървърна грешка');
-    done = ['vision', 'sports', 'calc', 'save'];
+  setSteps(done, 'vision');
+  var fd = new FormData();
+  fd.append('image', imgFile);
+  fd.append('client_id', selClientForUpload.id);
+  fetch('/api/analyze', {method:'POST', body:fd}).then(function(r) {
+    return r.json().then(function(data) { return {ok: r.ok, data: data}; });
+  }).then(function(res) {
+    if (!res.ok) throw new Error(res.data.error || 'Сървърна грешка');
+    done = ['vision','sports','calc','save'];
     setSteps(done, null);
-    show('u-proc', false);
-    curResult = data;
-    renderResult(data);
+    curResult = res.data;
+    showEl('u-proc', false);
+    renderResult(res.data);
     loadDashboard();
-  } catch(e) {
-    show('u-proc', false);
-    showErr(e.message);
-  }
+  }).catch(function(e) {
+    showEl('u-proc', false);
+    showErr(e.message || 'Грешка');
+  });
 }
 
 function renderResult(data) {
-  var r = data;
   var ra = document.getElementById('u-res');
   ra.style.display = 'block';
-  var cls = r.isPending ? 'pd' : r.isProfit ? 'pr' : 'ls';
-  var ac = r.isPending ? '#fbbf24' : r.isProfit ? '#22c55e' : '#ef4444';
-  var at = r.isPending ? '⏳ ИЗЧАКВАНЕ' : ((r.isProfit?'+':'-') + Number(r.ourAmount).toFixed(2) + ' лв.');
-  var st = r.isPending ? 'МАЧОВЕТЕ НЕ СА ПРИКЛЮЧИЛИ' : r.isProfit ? 'ЗАГУБЕН ФИШ — НИЕ ПЕЧЕЛИМ' : 'СПЕЧЕЛЕН ФИШ — НИЕ ГУБИМ';
-  var html = '<div class="res-card"><div class="res-top '+cls+'">';
-  html += '<div class="res-lbl">НАШ РЕЗУЛТАТ · '+selClient.name+'</div>';
-  html += '<div class="res-amt" style="color:'+ac+'">'+at+'</div>';
-  html += '<div class="res-status" style="color:'+ac+'">'+st+'</div>';
-  html += '</div><div class="res-stats">';
-  html += '<div class="rs"><div class="rs-l">ЗАЛОГ</div><div class="rs-v">'+r.slip.stake+' лв.</div></div>';
-  html += '<div class="rs"><div class="rs-l">×КОЕ-Т</div><div class="rs-v">×'+r.slip.total_odds+'</div></div>';
-  html += '<div class="rs"><div class="rs-l">ПОТ.ПЕЧ.</div><div class="rs-v">'+r.slip.potential_win+' лв.</div></div>';
-  html += '</div><div class="matches-list">';
-  (r.matches||[]).forEach(function(m,i) {
-    var w=m.result==='WIN', l=m.result==='LOSS', v=m.result==='LIVE';
-    html += '<div class="mrow'+(w?' w':l?' l':v?' v':'')+'"><div style="flex:1"><div class="mt">'+m.display+'</div><div class="mm">×'+m.odds+' · '+m.sport+'</div></div><div style="text-align:right">';
-    if(m.score&&m.score!=='N/F') html+='<div style="font-size:10px;color:var(--muted);margin-bottom:2px">'+m.score+'</div>';
-    html+='<div class="mi">'+(w?'❌':l?'✅':v?'🔴':'⏳')+'</div>';
-    html+='<div class="obs"><button class="ob w" onclick="override('+i+',\'WIN\')">❌</button><button class="ob l" onclick="override('+i+',\'LOSS\')">✅</button><button class="ob p" onclick="override('+i+',\'PENDING\')">⏳</button></div>';
-    html+='</div></div>';
-  });
+  var isProfit = data.isProfit, isPending = data.isPending, ourAmount = data.ourAmount;
+  var matches = data.matches || [], slip = data.slip;
+  var cls = isPending ? 'pd' : isProfit ? 'pr' : 'ls';
+  var ac = isPending ? '#fbbf24' : isProfit ? '#4ade80' : '#f87171';
+  var at = isPending ? '⏳ ИЗЧАКВАНЕ' : ((isProfit ? '+' : '-') + Number(ourAmount).toFixed(2) + ' лв.');
+  var st = isPending ? 'МАЧОВЕТЕ НЕ СА ПРИКЛЮЧИЛИ' : isProfit ? 'ЗАГУБЕН ФИШ — НИЕ ПЕЧЕЛИМ' : 'СПЕЧЕЛЕН ФИШ — НИЕ ГУБИМ';
+  var clientName = selClientForUpload ? selClientForUpload.name : '';
+  var html = '<div class="res-card"><div class="res-top ' + cls + '">' +
+    '<div class="res-lbl">НАШ РЕЗУЛТАТ · ' + clientName + '</div>' +
+    '<div class="res-amt" style="color:' + ac + '">' + at + '</div>' +
+    '<div class="res-status" style="color:' + ac + '">' + st + '</div>' +
+    '</div><div class="res-stats">' +
+    '<div class="rs"><div class="rs-l">ЗАЛОГ</div><div class="rs-v">' + slip.stake + ' лв.</div></div>' +
+    '<div class="rs"><div class="rs-l">×КОЕ-Т</div><div class="rs-v">×' + slip.totalOdds + '</div></div>' +
+    '<div class="rs"><div class="rs-l">ПОТ.ПЕЧ.</div><div class="rs-v">' + slip.potentialWin + ' лв.</div></div>' +
+    '</div><div class="matches">';
+  for (var i = 0; i < matches.length; i++) {
+    var m = matches[i];
+    var w = m.result === 'WIN', l = m.result === 'LOSS', v = m.result === 'LIVE';
+    html += '<div class="mrow' + (w ? ' w' : l ? ' l' : v ? ' v' : '') + '">' +
+      '<div style="flex:1"><div class="mt">' + (m.display || m.team1 + ' vs ' + m.team2) + '</div>' +
+      '<div class="mm">×' + m.odds + ' · ' + m.sport + '</div></div>' +
+      '<div style="text-align:right">';
+    if (m.score && m.score !== 'N/F') {
+      html += '<div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:2px">' + m.score + '</div>';
+    }
+    html += '<div class="mi">' + (w ? '❌' : l ? '✅' : v ? '🔴' : '⏳') + '</div>' +
+      '<div class="obs">' +
+      '<button class="ob w" onclick="ovr(' + i + ',\'WIN\')">❌</button>' +
+      '<button class="ob l" onclick="ovr(' + i + ',\'LOSS\')">✅</button>' +
+      '<button class="ob p" onclick="ovr(' + i + ',\'PENDING\')">⏳</button>' +
+      '</div></div></div>';
+  }
   html += '</div>';
-  if (r.isPending) html += '<button class="save-btn" onclick="saveManual()">💾 ЗАПАЗИ РЪЧНО</button>';
-  html += '</div>';
+  if (isPending) {
+    html += '<button class="save-btn" onclick="manSave()">💾 ЗАПАЗИ РЪЧНО</button>';
+  }
+  html += '<button class="save-btn" style="background:transparent;border-color:rgba(255,255,255,.07);color:rgba(255,255,255,.3)" onclick="resetUpload()">✕ Нов фиш</button></div>';
   ra.innerHTML = html;
 }
 
-function override(i, v) {
+function ovr(i, v) {
   if (!curResult) return;
   curResult.matches[i].result = v;
-  var anyL = curResult.matches.some(function(m){return m.result==='LOSS';});
-  var allW = curResult.matches.every(function(m){return m.result==='WIN';});
-  curResult.isProfit = anyL; curResult.isPending = !anyL&&!allW;
-  curResult.ourAmount = curResult.isPending ? 0 : anyL ? curResult.slip.stake : curResult.slip.potential_win;
-  // Update in DB
-  fetch('/api/slips/'+curResult.slip.id, {
-    method: 'PATCH',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({result: curResult.isPending?'PENDING':anyL?'LOSS':'WIN', our_amount: curResult.ourAmount, is_profit: anyL})
+  var anyL = false, allW = true;
+  for (var j = 0; j < curResult.matches.length; j++) {
+    if (curResult.matches[j].result === 'LOSS') anyL = true;
+    if (curResult.matches[j].result !== 'WIN') allW = false;
+  }
+  curResult.isProfit = anyL;
+  curResult.isPending = !anyL && !allW;
+  curResult.ourAmount = curResult.isPending ? 0 : anyL ? curResult.slip.stake : curResult.slip.potentialWin;
+  fetch('/api/slips/' + curResult.slip.id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      result: curResult.isPending ? 'PENDING' : anyL ? 'LOSS' : 'WIN',
+      our_amount: curResult.ourAmount,
+      is_profit: anyL,
+      matches: curResult.matches
+    })
   });
   renderResult(curResult);
 }
 
-async function saveManual() {
+function manSave() {
   if (!curResult) return;
-  var anyL = curResult.matches.some(function(m){return m.result==='LOSS';});
-  var allW = curResult.matches.every(function(m){return m.result==='WIN';});
-  var isProfit = anyL; var isPending = !anyL&&!allW;
-  var ourAmount = isPending ? 0 : isProfit ? curResult.slip.stake : curResult.slip.potential_win;
-  await fetch('/api/slips/'+curResult.slip.id, {
-    method: 'PATCH',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({result: isPending?'PENDING':isProfit?'LOSS':'WIN', our_amount: ourAmount, is_profit: isProfit})
+  var anyL = false, allW = true;
+  for (var j = 0; j < curResult.matches.length; j++) {
+    if (curResult.matches[j].result === 'LOSS') anyL = true;
+    if (curResult.matches[j].result !== 'WIN') allW = false;
+  }
+  var isPend = !anyL && !allW;
+  var amt = isPend ? 0 : anyL ? curResult.slip.stake : curResult.slip.potentialWin;
+  fetch('/api/slips/' + curResult.slip.id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({result: isPend?'PENDING':anyL?'LOSS':'WIN', our_amount:amt, is_profit:anyL, matches:curResult.matches})
+  }).then(function() {
+    loadDashboard();
+    resetUpload();
   });
-  loadDashboard();
-  resetUpload();
+}
+
+// Manual slip
+function openManual() {
+  if (!CLIENTS.length) return;
+  var opts = '';
+  for (var i = 0; i < CLIENTS.length; i++) {
+    opts += '<option value="' + CLIENTS[i].id + '">' + CLIENTS[i].name + '</option>';
+  }
+  var today = new Date().toISOString().slice(0,10);
+  openModal('Добави фиш ръчно',
+    '<div class="field"><label>Клиент</label><select id="m-client">' + opts + '</select></div>' +
+    '<div class="field"><label>Дата</label><input type="date" id="m-date" value="' + today + '"></div>' +
+    '<div class="field"><label>Залог (лв.)</label><input type="number" id="m-stake" placeholder="150"></div>' +
+    '<div class="field"><label>Резултат</label><select id="m-result">' +
+    '<option value="LOSS">Загубен фиш (ние печелим)</option>' +
+    '<option value="WIN">Спечелен фиш (ние губим)</option>' +
+    '<option value="PENDING">Изчакване</option>' +
+    '</select></div>' +
+    '<div class="field"><label>Наша сума (лв.)</label><input type="number" id="m-amount" placeholder="150"></div>' +
+    '<div class="field"><label>Мачове (по избор)</label><input id="m-matches" placeholder="КАР - КОЛ"></div>' +
+    '<div class="modal-btns">' +
+    '<button class="modal-btn cancel" onclick="closeModal()">Отказ</button>' +
+    '<button class="modal-btn primary" onclick="saveManual()">Запази</button>' +
+    '</div>'
+  );
+}
+
+function saveManual() {
+  var client_id = document.getElementById('m-client').value;
+  var slip_date = document.getElementById('m-date').value;
+  var stake = parseFloat(document.getElementById('m-stake').value) || 0;
+  var result = document.getElementById('m-result').value;
+  var our_amount = parseFloat(document.getElementById('m-amount').value) || stake;
+  var matchText = document.getElementById('m-matches').value;
+  var is_profit = result === 'LOSS';
+  var matches = matchText ? [{display:matchText,team1:'',team2:'',pick:'1',odds:1,sport:'',result:result}] : [];
+  fetch('/api/slips/manual', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({client_id:client_id,slip_date:slip_date,stake:stake,result:result,our_amount:our_amount,is_profit:is_profit,matches:matches})
+  }).then(function() {
+    closeModal();
+    loadDashboard();
+  });
 }
 
 // Live
-async function loadLive() {
+function loadLive() {
   var el = document.getElementById('live-content');
-  try {
-    var r = await fetch('/api/live');
-    var games = await r.json();
-    if (!games.length) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Няма активни мачове</div>'; return; }
-    el.innerHTML = games.map(function(g) {
-      return '<div class="live-match"><div class="lm-hdr"><div class="lm-live"><span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 1s infinite"></span>НА ЖИВО</div><span class="lm-league">'+g.sport+'</span></div><div class="lm-score"><div class="lm-team">'+g.away+'</div><div class="lm-result">'+g.awayScore+' : '+g.homeScore+'</div><div class="lm-team">'+g.home+'</div></div></div>';
-    }).join('');
-  } catch(e) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Грешка</div>'; }
+  el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Зарежда...</div>';
+  fetch('/api/live').then(function(r) { return r.json(); }).then(function(res) {
+    var live = res.live || [];
+    if (!live.length) {
+      el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Няма активни мачове</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < live.length; i++) {
+      var g = live[i];
+      var isLive = g.status === 'LIVE';
+      var dotColor = isLive ? '#f87171' : 'rgba(255,255,255,.3)';
+      var statusText = isLive ? 'НА ЖИВО' : 'ПРЕДСТОЯЩ';
+      html += '<div class="live-card">' +
+        '<div class="lc-hdr">' +
+        '<div class="lc-live"><span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';display:inline-block"></span> ' + statusText + '</div>' +
+        '<span class="lc-lg">' + g.sport + '</span>' +
+        '</div>' +
+        '<div class="lc-score">' +
+        '<div class="lc-team">' + (g.away || '') + '</div>' +
+        '<div class="lc-result">' + (isLive ? g.awayScore + ':' + g.homeScore : 'vs') + '</div>' +
+        '<div class="lc-team" style="text-align:right">' + (g.home || '') + '</div>' +
+        '</div></div>';
+    }
+    el.innerHTML = html;
+  }).catch(function() {
+    el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Грешка при зареждане</div>';
+  });
 }
 
 // History
-async function loadHistory() {
-  var el = document.getElementById('history-content');
-  try {
-    var r = await fetch('/api/stats');
-    var stats = await r.json();
-    var html = '';
-    for (var i=0; i<stats.length; i++) {
-      var c = stats[i];
-      html += '<div style="padding:0 16px;margin-bottom:8px"><div style="font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">'+c.name+'</div>';
-      html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center" onclick="showClientDetail({id:'+(i+1)+',name:\''+c.name+'\',color:\''+c.color+'\'})">';
-      html += '<div><div style="font-size:13px;font-weight:600;color:'+c.color+'">'+c.name+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+c.total_slips+' фиша · '+c.wins+'W/'+c.losses+'L</div></div>';
-      html += '<div style="font-size:20px;font-weight:700;color:'+(Number(c.balance)>=0?'#22c55e':'#ef4444')+'">'+(Number(c.balance)>=0?'+':'')+Math.round(Number(c.balance||0))+' лв.</div>';
-      html += '</div></div>';
+function loadHistory() {
+  var el = document.getElementById('hist-content');
+  fetch('/api/clients').then(function(r) { return r.json(); }).then(function(clients) {
+    var totalBal = 0, totalTot = 0;
+    for (var i = 0; i < clients.length; i++) {
+      totalBal += Number(clients[i].balance || 0);
+      totalTot += Number(clients[i].total || 0);
     }
-    el.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:30px">Няма данни</div>';
-  } catch(e) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Грешка</div>'; }
+    var html = '<div style="padding:0 14px 12px">' +
+      '<div style="background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+      '<div style="text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:3px">ТЕКУЩ БАЛАНС</div>' +
+      '<div style="font-size:18px;font-weight:500;color:' + (totalBal >= 0 ? '#4ade80' : '#f87171') + '">' + (totalBal >= 0 ? '+' : '') + Math.round(totalBal) + ' лв.</div></div>' +
+      '<div style="text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:3px">ТОТАЛ</div>' +
+      '<div style="font-size:18px;font-weight:500;color:' + (totalTot >= 0 ? '#4ade80' : '#f87171') + '">' + (totalTot >= 0 ? '+' : '') + Math.round(totalTot) + ' лв.</div></div>' +
+      '</div></div>';
+    for (var i = 0; i < clients.length; i++) {
+      var c = clients[i];
+      var bal = Number(c.balance || 0);
+      var tot = Number(c.total || 0);
+      html += '<div style="background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;margin:0 14px 8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="openClientById(' + c.id + ')">' +
+        '<div><div style="font-size:13px;font-weight:500;color:' + (bal >= 0 ? '#4ade80' : '#f87171') + '">' + c.name + '</div>' +
+        '<div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">' + (c.total_slips || 0) + ' фиша · ' + c.wins + 'W/' + c.losses + 'L</div></div>' +
+        '<div style="text-align:right">' +
+        '<div style="font-size:18px;font-weight:500;color:' + (bal >= 0 ? '#4ade80' : '#f87171') + '">' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.</div>' +
+        '<div style="font-size:10px;color:rgba(255,255,255,.3)">Тотал: ' + (tot >= 0 ? '+' : '') + Math.round(tot) + ' лв.</div>' +
+        '</div></div>';
+    }
+    el.innerHTML = html;
+  }).catch(function() {
+    el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Грешка</div>';
+  });
 }
 
-// Auto refresh live
-setInterval(function() { if (document.getElementById('pg-live').classList.contains('active')) loadLive(); }, 30000);
+// Modal overlay close
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 
 // Init
 loadDashboard();
+setInterval(loadDashboard, 30000);
+setInterval(function() {
+  if (document.getElementById('pg-live').className.indexOf('act') !== -1) loadLive();
+}, 30000);
 </script>
 </body>
 </html>
