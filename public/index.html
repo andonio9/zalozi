@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Залог Система</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#030712;--surface:#0f172a;--card:#1e293b;--border:rgba(255,255,255,0.08);--text:#f1f5f9;--muted:#64748b;--green:#22c55e;--red:#ef4444;--blue:#3b82f6}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;padding-bottom:80px}
+.hdr{padding:20px 16px 0;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.logo{font-size:18px;font-weight:700}
+.live-badge{display:flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--green)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.total-card{margin:0 16px 16px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a);border-radius:20px;padding:22px;position:relative;overflow:hidden}
+.total-card::before{content:'';position:absolute;top:-40px;right:-20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.tc-label{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
+.tc-amount{font-size:38px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:14px}
+.tc-stats{display:flex;gap:20px}
+.tc-stat-l{font-size:10px;color:rgba(255,255,255,.4);margin-bottom:2px}
+.tc-stat-v{font-size:13px;font-weight:600;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:16px}
+.client-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all .2s}
+.client-card:active{transform:scale(.97)}
+.client-card.active{border-width:2px}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cc-name{font-size:13px;font-weight:600}
+.cc-badge{font-size:9px;background:rgba(255,255,255,.06);color:var(--muted);padding:2px 6px;border-radius:10px}
+.cc-amount{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.cc-mini{width:100%;height:24px}
+.pills{display:flex;gap:6px;padding:0 16px;margin-bottom:14px;flex-wrap:wrap}
+.pill{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:500}
+.pill.active{color:#fff}
+.sec{padding:0 16px;margin-bottom:14px}
+.upload-lbl{display:block;background:var(--surface);border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .2s}
+.upload-lbl:active{border-color:var(--blue);background:rgba(59,130,246,.05)}
+.u-icon{font-size:32px;margin-bottom:8px}
+.u-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.u-sub{font-size:11px;color:var(--muted)}
+.prev-img{width:100%;max-height:220px;object-fit:contain;background:#000;display:block;border-radius:12px;margin-bottom:10px}
+.btn-row{display:flex;gap:8px}
+.btn-p{flex:2;background:var(--blue);border:none;color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-p:active{opacity:.8}
+.btn-s{flex:1;background:transparent;border:1px solid var(--border);color:var(--muted);padding:13px;border-radius:12px;font-size:13px;cursor:pointer}
+.proc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+.proc-title{font-size:14px;font-weight:600;margin-bottom:12px;text-align:center}
+.step{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
+.step:last-child{border:none}
+.step.done{color:var(--green)}
+.step.active{color:var(--text);font-weight:600}
+.sdot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.step.done .sdot{background:rgba(34,197,94,.15);color:var(--green)}
+.step.active .sdot{background:rgba(59,130,246,.15);color:var(--blue)}
+.res-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.res-top{padding:22px;text-align:center}
+.res-top.pr{background:rgba(34,197,94,.08)}
+.res-top.ls{background:rgba(239,68,68,.08)}
+.res-top.pd{background:rgba(251,191,36,.06)}
+.res-lbl{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.res-amt{font-size:40px;font-weight:700;margin-bottom:6px}
+.res-status{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border)}
+.rs{padding:12px 6px;text-align:center;border-right:1px solid var(--border)}
+.rs:last-child{border:none}
+.rs-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.rs-v{font-size:13px;font-weight:600}
+.matches-list{padding:12px}
+.mrow{display:flex;gap:10px;align-items:center;padding:9px;background:rgba(255,255,255,.02);border-radius:10px;margin-bottom:5px;border-left:3px solid var(--border)}
+.mrow.w{border-left-color:#dc2626}
+.mrow.l{border-left-color:var(--green)}
+.mrow.v{border-left-color:#fbbf24}
+.mt{font-size:12px;font-weight:500;margin-bottom:2px}
+.mm{font-size:10px;color:var(--muted)}
+.mi{font-size:18px}
+.obs{display:flex;gap:4px;margin-top:5px}
+.ob{flex:1;border:1px solid var(--border);background:transparent;color:var(--muted);padding:3px 4px;border-radius:5px;font-size:9px;cursor:pointer}
+.ob.w{border-color:rgba(220,38,38,.4);color:#f87171}
+.ob.l{border-color:rgba(34,197,94,.4);color:var(--green)}
+.ob.p{border-color:rgba(251,191,36,.4);color:#fbbf24}
+.save-btn{display:block;width:calc(100% - 24px);margin:0 12px 12px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-align:center}
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:14px}
+.err-m{font-size:11px;color:rgba(239,68,68,.8);line-height:1.5;margin-bottom:8px}
+.err-c{background:transparent;border:1px solid rgba(239,68,68,.2);color:var(--red);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:rgba(3,7,18,.95);border-top:1px solid var(--border);padding:8px 0;backdrop-filter:blur(20px)}
+.nb{flex:1;background:transparent;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;opacity:.4}
+.nb.active{opacity:1}
+.nb-i{font-size:22px}
+.nb-l{font-size:9px;font-weight:500;color:var(--muted)}
+.nb.active .nb-l{color:var(--blue)}
+.page{display:none;padding:0}
+.page.active{display:block}
+.live-match{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 10px}
+.lm-hdr{display:flex;justify-content:space-between;margin-bottom:10px}
+.lm-live{font-size:10px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:4px}
+.lm-league{font-size:10px;color:var(--muted)}
+.lm-score{display:flex;justify-content:space-between;align-items:center}
+.lm-team{font-size:13px;font-weight:600}
+.lm-result{font-size:26px;font-weight:700;letter-spacing:-1px}
+.hist-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 8px;cursor:pointer}
+.hist-top{display:flex;justify-content:space-between;margin-bottom:6px}
+.hist-matches{font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.5}
+.hist-bottom{display:flex;justify-content:space-between;align-items:center}
+.hist-amount{font-size:16px;font-weight:700}
+.slip-img{width:100%;border-radius:10px;margin-top:10px;max-height:200px;object-fit:contain;background:#000}
+.client-detail{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 16px 14px}
+.cd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cd-name{font-size:16px;font-weight:700}
+.cd-back{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:var(--card);border-radius:10px;padding:10px;text-align:center}
+.stat-l{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.stat-v{font-size:16px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="pg-upload" class="page active">
+<div class="hdr">
+  <div class="logo">📋 Залог Система</div>
+  <div class="live-badge"><div class="dot"></div><span id="ws-status">Live</span></div>
+</div>
+<div class="total-card">
+  <div class="tc-label">Общо всички клиенти</div>
+  <div class="tc-amount" id="total-amount">+0 лв.</div>
+  <div class="tc-stats">
+    <div><div class="tc-stat-l">Днес</div><div class="tc-stat-v" id="today-count">0 фиша</div></div>
+    <div><div class="tc-stat-l">Win Rate</div><div class="tc-stat-v" id="win-rate">—</div></div>
+    <div><div class="tc-stat-l">Общо фишове</div><div class="tc-stat-v" id="total-slips">0</div></div>
+  </div>
+</div>
+<div class="grid2" id="clients-grid"></div>
+<div class="pills" id="client-pills"></div>
+<div class="sec">
+  <div id="u-box">
+    <label class="upload-lbl" for="file-in">
+      <div class="u-icon">📷</div>
+      <div class="u-title">Качи снимка на фиш</div>
+      <div class="u-sub">bet365 · PNG · JPG · HEIC</div>
+    </label>
+    <input type="file" id="file-in" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
+  </div>
+  <div id="u-prev" style="display:none">
+    <img id="prev-img" class="prev-img" src="" alt="">
+    <div class="btn-row">
+      <button class="btn-p" onclick="analyze()">⚡ АНАЛИЗИРАЙ И ЗАПИШИ</button>
+      <button class="btn-s" onclick="resetUpload()">✕</button>
+    </div>
+  </div>
+  <div id="u-proc" style="display:none">
+    <div class="proc"><div class="proc-title">Обработвам фиша...</div><div id="steps-el"></div></div>
+  </div>
+  <div id="u-err" style="display:none">
+    <div class="err"><div class="err-m" id="err-m"></div><button class="err-c" onclick="document.getElementById('u-err').style.display='none'">Затвори</button></div>
+  </div>
+  <div id="u-res" style="display:none"></div>
+</div>
+</div>
+
+<div id="pg-live" class="page">
+<div class="hdr"><div class="logo">🔴 На живо</div><div class="live-badge"><div class="dot"></div>Auto 30s</div></div>
+<div id="live-content"><div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div></div>
+</div>
+
+<div id="pg-history" class="page">
+<div class="hdr"><div class="logo">📋 История</div></div>
+<div id="history-content"><div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div></div>
+</div>
+
+<div id="pg-client" class="page">
+<div class="hdr"><div class="logo" id="client-page-name">Клиент</div></div>
+<div id="client-detail-content"></div>
+</div>
+
+<nav class="nav">
+  <button class="nb active" id="nb-upload" onclick="showPage('upload')"><div class="nb-i">📷</div><div class="nb-l" style="color:var(--blue)">Фиш</div></button>
+  <button class="nb" id="nb-live" onclick="showPage('live')"><div class="nb-i">🔴</div><div class="nb-l">На живо</div></button>
+  <button class="nb" id="nb-history" onclick="showPage('history')"><div class="nb-i">📋</div><div class="nb-l">История</div></button>
+</nav>
+
+<script>
+var CLIENTS = [];
+var selClient = null;
+var imgFile = null;
+var curResult = null;
+
+// WebSocket
+var ws;
+function connectWS() {
+  var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(proto + '//' + location.host);
+  ws.onopen = function() { document.getElementById('ws-status').textContent = 'Live'; };
+  ws.onclose = function() { document.getElementById('ws-status').textContent = 'Офлайн'; setTimeout(connectWS, 3000); };
+  ws.onmessage = function(e) {
+    var d = JSON.parse(e.data);
+    if (d.type === 'new_slip' || d.type === 'slip_resolved' || d.type === 'slip_updated') {
+      loadDashboard();
+    }
+  };
+}
+connectWS();
+
+// Pages
+function showPage(p) {
+  ['upload','live','history','client'].forEach(function(x) {
+    document.getElementById('pg-'+x).className = 'page' + (x===p?' active':'');
+    var nb = document.getElementById('nb-'+x);
+    if (nb) nb.className = 'nb' + (x===p?' active':'');
+  });
+  if (p==='live') loadLive();
+  if (p==='history') loadHistory();
+}
+
+// Dashboard
+async function loadDashboard() {
+  try {
+    var r = await fetch('/api/clients');
+    CLIENTS = await r.json();
+    var totalAll = CLIENTS.reduce(function(s,c){return s+Number(c.balance||0);}, 0);
+    var totalSlips = CLIENTS.reduce(function(s,c){return s+Number(c.total_slips||0);}, 0);
+    var totalWins = CLIENTS.reduce(function(s,c){return s+Number(c.wins||0);}, 0);
+    var totalLosses = CLIENTS.reduce(function(s,c){return s+Number(c.losses||0);}, 0);
+    var tot = totalWins + totalLosses;
+    document.getElementById('total-amount').textContent = (totalAll>=0?'+':'') + Math.round(totalAll) + ' лв.';
+    document.getElementById('total-slips').textContent = totalSlips;
+    document.getElementById('win-rate').textContent = tot>0 ? Math.round(totalWins/tot*100)+'%' : '—';
+    renderClientCards();
+  } catch(e) { console.error(e); }
+}
+
+function renderClientCards() {
+  var grid = document.getElementById('clients-grid');
+  var pills = document.getElementById('client-pills');
+  grid.innerHTML = ''; pills.innerHTML = '';
+  CLIENTS.forEach(function(c) {
+    var isActive = selClient && selClient.id === c.id;
+    var card = document.createElement('div');
+    card.className = 'client-card' + (isActive?' active':'');
+    if (isActive) card.style.borderColor = c.color;
+    card.innerHTML = '<div class="cc-top"><div class="cc-name" style="color:'+(isActive?c.color:'#94a3b8')+'">'+c.name+'</div><div class="cc-badge">'+c.wins+'W/'+c.losses+'L</div></div><div class="cc-amount" style="color:'+(Number(c.balance)>=0?(isActive?c.color:'#f1f5f9'):'#ef4444')+'">'+(Number(c.balance)>=0?'+':'')+Math.round(Number(c.balance))+' лв.</div>';
+    card.onclick = function() { showClientDetail(c); };
+    grid.appendChild(card);
+    var pill = document.createElement('button');
+    pill.className = 'pill' + (isActive?' active':'');
+    if (isActive) { pill.style.background = c.color; pill.style.borderColor = c.color; pill.style.color = '#fff'; }
+    pill.textContent = c.name;
+    pill.onclick = function() { selClient = c; renderClientCards(); };
+    pills.appendChild(pill);
+  });
+  if (!selClient && CLIENTS.length) selClient = CLIENTS[0];
+}
+
+function showClientDetail(client) {
+  showPage('client');
+  document.getElementById('client-page-name').textContent = client.name;
+  document.getElementById('client-detail-content').innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Зарежда...</div>';
+  fetch('/api/clients/'+client.id+'/slips').then(function(r){return r.json();}).then(function(slips) {
+    var bal = slips.reduce(function(s,x){return s+(x.is_profit?Number(x.our_amount):-Number(x.our_amount));},0);
+    var wins = slips.filter(function(s){return s.result==='LOSS';}).length;
+    var losses = slips.filter(function(s){return s.result==='WIN';}).length;
+    var html = '<div class="client-detail"><div class="cd-top"><div class="cd-name" style="color:'+client.color+'">'+client.name+'</div><button class="cd-back" onclick="showPage(\'upload\')">← Назад</button></div>';
+    html += '<div class="stat-grid">';
+    html += '<div class="stat-box"><div class="stat-l">Баланс</div><div class="stat-v" style="color:'+(bal>=0?'#22c55e':'#ef4444')+'">'+(bal>=0?'+':'')+Math.round(bal)+' лв.</div></div>';
+    html += '<div class="stat-box"><div class="stat-l">Печелим</div><div class="stat-v" style="color:#22c55e">'+wins+'</div></div>';
+    html += '<div class="stat-box"><div class="stat-l">Губим</div><div class="stat-v" style="color:#ef4444">'+losses+'</div></div>';
+    html += '</div></div>';
+    html += '<div style="padding:0 16px;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">История</div>';
+    slips.forEach(function(s) {
+      var ms = (s.matches||[]).map(function(m){return m.display+(m.result==='WIN'?' ❌':m.result==='LOSS'?' ✅':' ⏳');}).join(' · ');
+      html += '<div class="hist-item" onclick="toggleSlipImg(this,\''+s.image_path+'\')">';
+      html += '<div class="hist-top"><span style="font-size:11px;color:var(--muted)">'+s.date+'</span><span style="font-size:10px;background:rgba(255,255,255,.06);padding:2px 7px;border-radius:10px;color:var(--muted)">'+s.total_odds+'x</span></div>';
+      html += '<div class="hist-matches">'+ms+'</div>';
+      html += '<div class="hist-bottom"><span class="hist-amount" style="color:'+(s.is_profit?'#22c55e':'#ef4444')+'">'+(s.is_profit?'+':'-')+Math.round(Number(s.our_amount))+' лв.</span><span style="font-size:10px;color:var(--muted)">'+Math.round(Number(s.stake))+' лв. залог</span></div>';
+      html += '</div>';
+    });
+    if (!slips.length) html += '<div style="text-align:center;color:var(--muted);padding:30px">Няма фишове</div>';
+    document.getElementById('client-detail-content').innerHTML = html;
+  });
+}
+
+function toggleSlipImg(el, imgPath) {
+  var existing = el.querySelector('.slip-img');
+  if (existing) { existing.remove(); return; }
+  if (!imgPath || imgPath === 'null') return;
+  var img = document.createElement('img');
+  img.className = 'slip-img';
+  img.src = imgPath;
+  el.appendChild(img);
+}
+
+// Upload
+document.getElementById('file-in').addEventListener('change', function(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+  imgFile = file;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    document.getElementById('prev-img').src = ev.target.result;
+    show('u-box', false); show('u-prev', true); show('u-proc', false); show('u-res', false); show('u-err', false);
+  };
+  reader.readAsDataURL(file);
+});
+
+function show(id, v) { document.getElementById(id).style.display = v ? 'block' : 'none'; }
+function resetUpload() {
+  imgFile = null; document.getElementById('file-in').value = '';
+  show('u-box', true); show('u-prev', false); show('u-proc', false); show('u-res', false); show('u-err', false);
+}
+function showErr(msg) { document.getElementById('err-m').textContent = msg; show('u-err', true); show('u-proc', false); show('u-prev', true); }
+
+function setSteps(done, active) {
+  var defs = [['vision','GPT-4o Vision чете фиша'],['sports','Проверка на резултатите'],['calc','Изчисляване'],['save','Записване']];
+  document.getElementById('steps-el').innerHTML = defs.map(function(s) {
+    var d = done.indexOf(s[0]) !== -1, a = s[0] === active;
+    return '<div class="step'+(d?' done':a?' active':'')+'"><div class="sdot">'+(d?'✓':a?'…':'○')+'</div>'+s[1]+'</div>';
+  }).join('');
+}
+
+async function analyze() {
+  if (!imgFile) { showErr('Няма снимка'); return; }
+  if (!selClient) { showErr('Избери клиент'); return; }
+  show('u-prev', false); show('u-proc', true); show('u-res', false); show('u-err', false);
+  var done = [];
+  try {
+    setSteps(done, 'vision');
+    var fd = new FormData();
+    fd.append('image', imgFile);
+    fd.append('client_id', selClient.id);
+    setSteps(done, 'sports');
+    var r = await fetch('/api/analyze', { method: 'POST', body: fd });
+    var data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Сървърна грешка');
+    done = ['vision', 'sports', 'calc', 'save'];
+    setSteps(done, null);
+    show('u-proc', false);
+    curResult = data;
+    renderResult(data);
+    loadDashboard();
+  } catch(e) {
+    show('u-proc', false);
+    showErr(e.message);
+  }
+}
+
+function renderResult(data) {
+  var r = data;
+  var ra = document.getElementById('u-res');
+  ra.style.display = 'block';
+  var cls = r.isPending ? 'pd' : r.isProfit ? 'pr' : 'ls';
+  var ac = r.isPending ? '#fbbf24' : r.isProfit ? '#22c55e' : '#ef4444';
+  var at = r.isPending ? '⏳ ИЗЧАКВАНЕ' : ((r.isProfit?'+':'-') + Number(r.ourAmount).toFixed(2) + ' лв.');
+  var st = r.isPending ? 'МАЧОВЕТЕ НЕ СА ПРИКЛЮЧИЛИ' : r.isProfit ? 'ЗАГУБЕН ФИШ — НИЕ ПЕЧЕЛИМ' : 'СПЕЧЕЛЕН ФИШ — НИЕ ГУБИМ';
+  var html = '<div class="res-card"><div class="res-top '+cls+'">';
+  html += '<div class="res-lbl">НАШ РЕЗУЛТАТ · '+selClient.name+'</div>';
+  html += '<div class="res-amt" style="color:'+ac+'">'+at+'</div>';
+  html += '<div class="res-status" style="color:'+ac+'">'+st+'</div>';
+  html += '</div><div class="res-stats">';
+  html += '<div class="rs"><div class="rs-l">ЗАЛОГ</div><div class="rs-v">'+r.slip.stake+' лв.</div></div>';
+  html += '<div class="rs"><div class="rs-l">×КОЕ-Т</div><div class="rs-v">×'+r.slip.total_odds+'</div></div>';
+  html += '<div class="rs"><div class="rs-l">ПОТ.ПЕЧ.</div><div class="rs-v">'+r.slip.potential_win+' лв.</div></div>';
+  html += '</div><div class="matches-list">';
+  (r.matches||[]).forEach(function(m,i) {
+    var w=m.result==='WIN', l=m.result==='LOSS', v=m.result==='LIVE';
+    html += '<div class="mrow'+(w?' w':l?' l':v?' v':'')+'"><div style="flex:1"><div class="mt">'+m.display+'</div><div class="mm">×'+m.odds+' · '+m.sport+'</div></div><div style="text-align:right">';
+    if(m.score&&m.score!=='N/F') html+='<div style="font-size:10px;color:var(--muted);margin-bottom:2px">'+m.score+'</div>';
+    html+='<div class="mi">'+(w?'❌':l?'✅':v?'🔴':'⏳')+'</div>';
+    html+='<div class="obs"><button class="ob w" onclick="override('+i+',\'WIN\')">❌</button><button class="ob l" onclick="override('+i+',\'LOSS\')">✅</button><button class="ob p" onclick="override('+i+',\'PENDING\')">⏳</button></div>';
+    html+='</div></div>';
+  });
+  html += '</div>';
+  if (r.isPending) html += '<button class="save-btn" onclick="saveManual()">💾 ЗАПАЗИ РЪЧНО</button>';
+  html += '</div>';
+  ra.innerHTML = html;
+}
+
+function override(i, v) {
+  if (!curResult) return;
+  curResult.matches[i].result = v;
+  var anyL = curResult.matches.some(function(m){return m.result==='LOSS';});
+  var allW = curResult.matches.every(function(m){return m.result==='WIN';});
+  curResult.isProfit = anyL; curResult.isPending = !anyL&&!allW;
+  curResult.ourAmount = curResult.isPending ? 0 : anyL ? curResult.slip.stake : curResult.slip.potential_win;
+  // Update in DB
+  fetch('/api/slips/'+curResult.slip.id, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({result: curResult.isPending?'PENDING':anyL?'LOSS':'WIN', our_amount: curResult.ourAmount, is_profit: anyL})
+  });
+  renderResult(curResult);
+}
+
+async function saveManual() {
+  if (!curResult) return;
+  var anyL = curResult.matches.some(function(m){return m.result==='LOSS';});
+  var allW = curResult.matches.every(function(m){return m.result==='WIN';});
+  var isProfit = anyL; var isPending = !anyL&&!allW;
+  var ourAmount = isPending ? 0 : isProfit ? curResult.slip.stake : curResult.slip.potential_win;
+  await fetch('/api/slips/'+curResult.slip.id, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({result: isPending?'PENDING':isProfit?'LOSS':'WIN', our_amount: ourAmount, is_profit: isProfit})
+  });
+  loadDashboard();
+  resetUpload();
+}
+
+// Live
+async function loadLive() {
+  var el = document.getElementById('live-content');
+  try {
+    var r = await fetch('/api/live');
+    var games = await r.json();
+    if (!games.length) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Няма активни мачове</div>'; return; }
+    el.innerHTML = games.map(function(g) {
+      return '<div class="live-match"><div class="lm-hdr"><div class="lm-live"><span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 1s infinite"></span>НА ЖИВО</div><span class="lm-league">'+g.sport+'</span></div><div class="lm-score"><div class="lm-team">'+g.away+'</div><div class="lm-result">'+g.awayScore+' : '+g.homeScore+'</div><div class="lm-team">'+g.home+'</div></div></div>';
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Грешка</div>'; }
+}
+
+// History
+async function loadHistory() {
+  var el = document.getElementById('history-content');
+  try {
+    var r = await fetch('/api/stats');
+    var stats = await r.json();
+    var html = '';
+    for (var i=0; i<stats.length; i++) {
+      var c = stats[i];
+      html += '<div style="padding:0 16px;margin-bottom:8px"><div style="font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">'+c.name+'</div>';
+      html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center" onclick="showClientDetail({id:'+(i+1)+',name:\''+c.name+'\',color:\''+c.color+'\'})">';
+      html += '<div><div style="font-size:13px;font-weight:600;color:'+c.color+'">'+c.name+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+c.total_slips+' фиша · '+c.wins+'W/'+c.losses+'L</div></div>';
+      html += '<div style="font-size:20px;font-weight:700;color:'+(Number(c.balance)>=0?'#22c55e':'#ef4444')+'">'+(Number(c.balance)>=0?'+':'')+Math.round(Number(c.balance||0))+' лв.</div>';
+      html += '</div></div>';
+    }
+    el.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:30px">Няма данни</div>';
+  } catch(e) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Грешка</div>'; }
+}
+
+// Auto refresh live
+setInterval(function() { if (document.getElementById('pg-live').classList.contains('active')) loadLive(); }, 30000);
+
+// Init
+loadDashboard();
+</script>
+</body>
+</html>
