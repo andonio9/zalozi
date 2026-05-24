@@ -17,7 +17,10 @@ app.use(cors());
 
 // Log ALL requests
 app.use(function(req, res, next) {
-  console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.path + ' body:' + JSON.stringify(req.body).slice(0,100));
+  try {
+    var bodyStr = req.body ? JSON.stringify(req.body).slice(0,100) : '';
+    console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.path + ' ' + bodyStr);
+  } catch(e) {}
   next();
 });
 app.use(express.json());
