@@ -76,7 +76,7 @@ function atGetRecords(tableId) {
 }
 
 function atCreateRecord(tableId, fields) {
-  return atRequest('POST', tableId, { fields: fields });
+  return atRequest('POST', tableId, { fields: fields, typecast: true });
 }
 
 function atDeleteRecord(tableId, recordId) {
