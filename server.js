@@ -1,5 +1,7 @@
 'use strict';
 
+try { require('dotenv').config(); } catch(e) {}
+
 var express    = require('express');
 var http       = require('http');
 var WebSocket  = require('ws');
@@ -203,24 +205,60 @@ function safeGet(url, opts) {
     .catch(function() { return null; });
 }
 
+// Universal ESPN fetcher - works for all sports
+function fetchESPNEvents(sport, league, date) {
+  var url = 'https://site.api.espn.com/apis/site/v2/sports/' + sport + '/' + league +
+            '/scoreboard?dates=' + date.replace(/-/g, '');
+  return safeGet(url).then(function(d) { return (d && d.events) ? d.events : []; });
+}
+
 function fetchNHL(date) {
-  return safeGet('https://api-web.nhle.com/v1/score/' + date)
-    .then(function(d) { return (d && d.games) ? d.games : []; });
+  return fetchESPNEvents('hockey', 'nhl', date);
 }
 
 function fetchMLB(date) {
-  return safeGet(
-    'https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=' + date + '&hydrate=linescore'
-  ).then(function(d) {
-    return (d && d.dates && d.dates[0]) ? d.dates[0].games : [];
+  // Try ESPN first, fallback to MLB API
+  return fetchESPNEvents('baseball', 'mlb', date).then(function(events) {
+    if (events.length) return events;
+    // MLB official API fallback
+    return safeGet('https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=' + date + '&hydrate=linescore')
+      .then(function(d) {
+        if (!d || !d.dates || !d.dates[0]) return [];
+        // Convert MLB format to ESPN-like for resolveESPN
+        return (d.dates[0].games || []).map(function(g) {
+          var homeAbbr = g.teams && g.teams.home && g.teams.home.team && g.teams.home.team.abbreviation || '';
+          var awayAbbr = g.teams && g.teams.away && g.teams.away.team && g.teams.away.team.abbreviation || '';
+          var homeName = g.teams && g.teams.home && g.teams.home.team && g.teams.home.team.name || '';
+          var awayName = g.teams && g.teams.away && g.teams.away.team && g.teams.away.team.name || '';
+          var st = g.status ? g.status.abstractGameState : '';
+          var homeScore = String(g.teams && g.teams.home && g.teams.home.score || 0);
+          var awayScore = String(g.teams && g.teams.away && g.teams.away.score || 0);
+          var ls = g.linescore;
+          if (ls && ls.teams) {
+            if (ls.teams.home && ls.teams.home.runs) homeScore = String(ls.teams.home.runs);
+            if (ls.teams.away && ls.teams.away.runs) awayScore = String(ls.teams.away.runs);
+          }
+          var completed = st === 'Final';
+          var inProgress = st === 'Live';
+          var homeWins = completed && Number(homeScore) > Number(awayScore);
+          return {
+            competitions: [{
+              status: { type: { completed: completed, state: inProgress ? 'in' : completed ? 'post' : 'pre' } },
+              competitors: [
+                { homeAway: 'home', score: homeScore, winner: homeWins,
+                  team: { abbreviation: homeAbbr, displayName: homeName } },
+                { homeAway: 'away', score: awayScore, winner: !homeWins && completed,
+                  team: { abbreviation: awayAbbr, displayName: awayName } }
+              ]
+            }]
+          };
+        });
+      });
   });
 }
 
 function fetchESPN(sport, league, date) {
-  return safeGet(
-    'https://site.api.espn.com/apis/site/v2/sports/' + sport + '/' + league +
-    '/scoreboard?dates=' + date.replace(/-/g, '')
-  ).then(function(d) { return (d && d.events) ? d.events : []; });
+  return fetchESPNEvents(sport, league, date);
 }
 
 function fetchFootball(date) {
@@ -232,23 +270,56 @@ function fetchFootball(date) {
 }
 
 // ─── RESOLVE FUNCTIONS ────────────────────────────────────────────────────────
-function resolveNHL(games, a1, a2, pick) {
+function resolveNHL(events, a1, a2, pick) {
+  // ESPN format - events array
   var u1 = String(a1 || '').toUpperCase();
   var u2 = String(a2 || '').toUpperCase();
-  for (var i = 0; i < games.length; i++) {
-    var g    = games[i];
-    var home = g.homeTeam && g.homeTeam.abbrev ? g.homeTeam.abbrev.toUpperCase() : '';
-    var away = g.awayTeam && g.awayTeam.abbrev ? g.awayTeam.abbrev.toUpperCase() : '';
-    if (!((home === u1 || away === u1) && (home === u2 || away === u2))) continue;
-    var st = g.gameState || '';
-    if (st === 'FUT' || st === 'PRE') return { result: 'PENDING', score: '-' };
-    var hs = Number((g.homeTeam && g.homeTeam.score) || 0);
-    var as = Number((g.awayTeam && g.awayTeam.score) || 0);
-    var awayIsT1 = away === u1;
-    var sc = (awayIsT1 ? as : hs) + ':' + (awayIsT1 ? hs : as);
-    if (st === 'LIVE' || st === 'CRIT') return { result: 'LIVE', score: sc };
-    var t1Won = awayIsT1 ? as > hs : hs > as;
-    return { result: (pick === '1' ? t1Won : !t1Won) ? 'WIN' : 'LOSS', score: sc };
+  var n1 = norm(a1 || '');
+  var n2 = norm(a2 || '');
+
+  for (var i = 0; i < events.length; i++) {
+    var ev   = events[i];
+    var comp = ev.competitions && ev.competitions[0];
+    if (!comp) continue;
+    var cs = comp.competitors || [];
+
+    // Match by abbreviation OR team name
+    var hasT1 = cs.some(function(c) {
+      var abbr = (c.team && c.team.abbreviation || '').toUpperCase();
+      var nm   = norm(c.team && c.team.displayName || '');
+      return abbr === u1 || nm.indexOf(n1) >= 0 || n1.indexOf(nm.slice(-4)) >= 0;
+    });
+    var hasT2 = cs.some(function(c) {
+      var abbr = (c.team && c.team.abbreviation || '').toUpperCase();
+      var nm   = norm(c.team && c.team.displayName || '');
+      return abbr === u2 || nm.indexOf(n2) >= 0 || n2.indexOf(nm.slice(-4)) >= 0;
+    });
+    if (!hasT1 || !hasT2) continue;
+
+    var st = comp.status && comp.status.type;
+    if (!st) return { result: 'PENDING', score: '-' };
+    if (!st.completed && st.state !== 'in') return { result: 'PENDING', score: '-' };
+    if (st.state === 'in') {
+      return { result: 'LIVE', score: cs.map(function(c) { return c.score || '0'; }).join(':') };
+    }
+
+    // Completed
+    var winner = null;
+    for (var j = 0; j < cs.length; j++) { if (cs[j].winner) { winner = cs[j]; break; } }
+    if (!winner) return { result: 'PENDING', score: '?' };
+
+    var wAbbr = (winner.team && winner.team.abbreviation || '').toUpperCase();
+    var wNm   = norm(winner.team && winner.team.displayName || '');
+    var t1Won = wAbbr === u1 || wNm.indexOf(n1) >= 0 || n1.indexOf(wNm.slice(-4)) >= 0;
+
+    var s1 = '?', s2 = '?';
+    for (var k = 0; k < cs.length; k++) {
+      var ka = (cs[k].team && cs[k].team.abbreviation || '').toUpperCase();
+      var kn = norm(cs[k].team && cs[k].team.displayName || '');
+      if (ka === u1 || kn.indexOf(n1) >= 0) s1 = cs[k].score || '?';
+      if (ka === u2 || kn.indexOf(n2) >= 0) s2 = cs[k].score || '?';
+    }
+    return { result: (pick === '1' ? t1Won : !t1Won) ? 'WIN' : 'LOSS', score: s1 + ':' + s2 };
   }
   return null;
 }
@@ -352,6 +423,7 @@ function resolveFootball(fixtures, t1, t2, pick) {
 
 function resolveMatches(matches, slipDate) {
   if (!matches || !matches.length) return Promise.resolve([]);
+  console.log('resolveMatches: ' + matches.length + ' matches, date=' + slipDate);
 
   var base = slipDate ? new Date(slipDate) : new Date();
   var dates = [];
@@ -391,18 +463,25 @@ function resolveMatches(matches, slipDate) {
     }
   });
 
+  console.log('Fetching ' + fetches.length + ' API calls for sports: ' + JSON.stringify(Object.keys(sports)));
   return Promise.all(fetches).then(function(results) {
     var cache = {};
-    for (var i = 0; i < keys.length; i++) cache[keys[i]] = results[i] || [];
+    for (var i = 0; i < keys.length; i++) {
+      cache[keys[i]] = results[i] || [];
+      if (results[i] && results[i].length) {
+        console.log('API ' + keys[i] + ': ' + results[i].length + ' games');
+      }
+    }
 
     return matches.map(function(m) {
       for (var di = 0; di < dates.length; di++) {
         var dt = dates[di];
         var r  = null;
         if (m.sport === 'NHL') {
-          r = resolveNHL(cache['NHL:'+dt] || [], m.team1abbr, m.team2abbr, m.pick);
+          // fetchNHL returns ESPN format, use resolveESPN
+          r = resolveESPN(cache['NHL:'+dt] || [], m.team1abbr || m.team1, m.team2abbr || m.team2, m.pick);
         } else if (m.sport === 'MLB') {
-          r = resolveMLB(cache['MLB:'+dt] || [], m.team1, m.team2, m.pick);
+          r = resolveESPN(cache['MLB:'+dt] || [], m.team1abbr || m.team1, m.team2abbr || m.team2, m.pick);
         } else if (m.sport === 'NBA') {
           r = resolveESPN(cache['NBA:'+dt] || [], m.team1, m.team2, m.pick);
         } else if (m.sport === 'NFL') {
@@ -417,8 +496,12 @@ function resolveMatches(matches, slipDate) {
             }
           }
         }
-        if (r) return Object.assign({}, m, r);
+        if (r) {
+          console.log('Match resolved: ' + m.display + ' -> ' + r.result + ' ' + r.score);
+          return Object.assign({}, m, r);
+        }
       }
+      console.log('Match NOT FOUND: ' + m.display + ' (' + m.sport + ') abbr=' + m.team1abbr + ' vs ' + m.team2abbr);
       return Object.assign({}, m, { result: 'PENDING', score: 'N/F' });
     });
   });
@@ -467,6 +550,11 @@ function readSlip(buf) {
 
 // ─── ROUTES ──────────────────────────────────────────────────────────────────
 
+// PING
+app.get('/api/ping', function(req, res) {
+  res.json({ ok: true, time: new Date().toISOString(), airtable: !!process.env.AIRTABLE_KEY, openai: !!process.env.OPENAI_API_KEY });
+});
+
 // GET /api/clients
 app.get('/api/clients', function(req, res) {
   var promises = CLIENTS.map(function(client) {
@@ -498,6 +586,45 @@ app.get('/api/clients', function(req, res) {
   Promise.all(promises)
     .then(function(data) { res.json(data); })
     .catch(function(e)   { res.status(500).json({ error: e.message }); });
+});
+
+// POST /api/clients (клиентите са фиксирани в Airtable но поддържаме добавяне в паметта)
+app.post('/api/clients', function(req, res) {
+  var name  = req.body && req.body.name;
+  var color = (req.body && req.body.color) || '#6366f1';
+  if (!name) return res.status(400).json({ error: 'Въведи име' });
+  // Add to local CLIENT_LIST (persists until server restart)
+  var newId = CLIENTS.length + 1;
+  CLIENTS.push({ id: newId, name: name, color: color,
+    tableId: 'tblXlqTekjWKVUn4B', // Default to Румен table structure
+    f: CLIENTS[0].f // Same field structure as Румен
+  });
+  broadcast({ type: 'client_added' });
+  res.json({ id: newId, name: name, color: color, balance: 0, total: 0, wins: 0, losses: 0, total_slips: 0 });
+});
+
+// PATCH /api/clients/:id
+app.patch('/api/clients/:id', function(req, res) {
+  var client = getClient(req.params.id);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (req.body && req.body.name)  client.name  = req.body.name;
+  if (req.body && req.body.color) client.color = req.body.color;
+  broadcast({ type: 'client_updated' });
+  res.json(client);
+});
+
+// DELETE /api/clients/:id
+app.delete('/api/clients/:id', function(req, res) {
+  var n = Number(req.params.id);
+  CLIENTS = CLIENTS.filter(function(c) { return c.id !== n; });
+  broadcast({ type: 'client_deleted', client_id: req.params.id });
+  res.json({ success: true });
+});
+
+// POST /api/clients/:id/settle
+app.post('/api/clients/:id/settle', function(req, res) {
+  broadcast({ type: 'client_settled', client_id: req.params.id });
+  res.json({ success: true, balance: 0 });
 });
 
 // GET /api/clients/:id/slips
@@ -730,18 +857,25 @@ app.get('/api/live', function(req, res) {
   ]).then(function(results) {
     var live = [];
 
-    (results[0] || []).forEach(function(g) {
-      var st = g.gameState || '';
-      if (st === 'LIVE' || st === 'CRIT') {
+    // NHL via ESPN format
+    (results[0] || []).forEach(function(ev) {
+      var comp = ev.competitions && ev.competitions[0];
+      if (!comp) return;
+      var st = comp.status && comp.status.type;
+      var cs = comp.competitors || [];
+      var home = cs.find(function(c) { return c.homeAway === 'home'; });
+      var away = cs.find(function(c) { return c.homeAway === 'away'; });
+      if (!st) return;
+      if (st.state === 'in') {
         live.push({ sport: 'НХЛ', status: 'LIVE',
-          home: (g.homeTeam && g.homeTeam.abbrev) || '',
-          away: (g.awayTeam && g.awayTeam.abbrev) || '',
-          homeScore: (g.homeTeam && g.homeTeam.score) || 0,
-          awayScore: (g.awayTeam && g.awayTeam.score) || 0 });
-      } else if (st === 'FUT' || st === 'PRE') {
+          home: (home && home.team && home.team.abbreviation) || '',
+          away: (away && away.team && away.team.abbreviation) || '',
+          homeScore: (home && home.score) || 0,
+          awayScore: (away && away.score) || 0 });
+      } else if (!st.completed && st.state !== 'in') {
         live.push({ sport: 'НХЛ', status: 'UPCOMING',
-          home: (g.homeTeam && g.homeTeam.abbrev) || '',
-          away: (g.awayTeam && g.awayTeam.abbrev) || '',
+          home: (home && home.team && home.team.abbreviation) || '',
+          away: (away && away.team && away.team.abbreviation) || '',
           homeScore: 0, awayScore: 0 });
       }
     });
