@@ -1,7 +1,6 @@
 {
-  "name": "zalozi-system",
+  "name": "zalozi",
   "version": "1.0.0",
-  "description": "Залог система за букмейкъри",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
