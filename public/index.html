@@ -5,254 +5,233 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Залог</title>
+<title>Залози</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:#07070f;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:76px}
+body{background:#08080f;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:80px}
 
-/* NAV */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:rgba(7,7,15,.97);border-top:1px solid rgba(255,255,255,.06);padding:10px 0 max(16px,env(safe-area-inset-bottom));z-index:99;backdrop-filter:blur(20px)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;opacity:.3;transition:opacity .2s}
-.nb.on{opacity:1}
-.nb-i{font-size:22px;line-height:1.2}
-.nb-l{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.4)}
-.nb.on .nb-l{color:#6366f1}
+/* ── NAVIGATION ── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(8,8,15,.96);border-top:1px solid rgba(255,255,255,.07);display:flex;z-index:99;padding:8px 0 max(12px,env(safe-area-inset-bottom));backdrop-filter:blur(20px)}
+.nb{flex:1;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;transition:color .15s}
+.nb.on{color:#818cf8}
+.nb-i{font-size:22px;line-height:1}
+.nb-l{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 
-/* PAGES */
-.pg{display:none}
+/* ── PAGES ── */
+.pg{display:none;padding-bottom:8px}
 .pg.on{display:block}
 
-/* HERO CARD */
-.hero{margin:14px;border-radius:20px;background:linear-gradient(145deg,#0f0f23,#1a1a35);border:1px solid rgba(99,102,241,.2);padding:20px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.12),transparent 70%)}
-.hero-label{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
-.hero-amount{font-size:40px;font-weight:700;letter-spacing:-1.5px;margin-bottom:14px;line-height:1}
-.live-pill{position:absolute;top:18px;right:18px;display:flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:600;color:#4ade80}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.stats-row{display:flex;border-top:1px solid rgba(255,255,255,.07);padding-top:14px;margin-bottom:16px}
-.stat{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.07)}
-.stat:last-child{border:none}
-.stat-l{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
-.stat-v{font-size:14px;font-weight:600}
-
-/* CHART BARS */
-.chart-title{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-.bars{display:flex;align-items:flex-end;gap:3px;height:52px}
-.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+/* ── HERO ── */
+.hero{margin:12px;border-radius:18px;background:linear-gradient(145deg,#0e0e20,#1a1a35);border:1px solid rgba(99,102,241,.15);padding:18px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-50px;right:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.hero-total{font-size:38px;font-weight:700;letter-spacing:-1.5px;margin-bottom:12px;line-height:1}
+.hero-stats{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.07);padding-top:12px;margin-bottom:14px}
+.hs{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.07)}
+.hs:last-child{border:none}
+.hs-l{font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.hs-v{font-size:14px;font-weight:700}
+.hero-chart-label{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:48px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
 .bar{width:100%;border-radius:3px 3px 0 0;min-height:2px}
-.bar.g{background:#4ade80;opacity:.65}
-.bar.r{background:#f87171;opacity:.65}
-.bar.z{background:rgba(255,255,255,.1);height:2px}
+.bar.g{background:rgba(74,222,128,.6)}
+.bar.r{background:rgba(248,113,113,.6)}
+.bar.z{height:2px;background:rgba(255,255,255,.1)}
 .bar-d{font-size:8px;color:rgba(255,255,255,.2)}
 
-/* SECTION HEADER */
-.sec-h{padding:4px 14px 8px;display:flex;justify-content:space-between;align-items:center}
-.sec-title{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
-.btn-add{display:flex;align-items:center;gap:4px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:#818cf8;cursor:pointer}
+/* ── SECTION ── */
+.sec-h{padding:4px 12px 8px;display:flex;justify-content:space-between;align-items:center}
+.sec-t{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+.btn-new{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer}
 
-/* CLIENT CARDS */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px;margin-bottom:14px}
-.cc{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px;cursor:pointer;transition:border-color .15s,transform .1s}
+/* ── CLIENT CARDS ── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px}
+.cc{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:12px;cursor:pointer;transition:transform .1s}
 .cc:active{transform:scale(.97)}
-.cc.g{border-color:rgba(74,222,128,.2)}
-.cc.r{border-color:rgba(248,113,113,.2)}
-.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .cc-name{font-size:12px;font-weight:700}
-.cc-badge{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600}
-.cc-badge.g{background:rgba(74,222,128,.1);color:#4ade80}
-.cc-badge.r{background:rgba(248,113,113,.1);color:#f87171}
-.cc-badge.n{background:rgba(255,255,255,.06);color:rgba(255,255,255,.25)}
-.cc-amt{font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-.5px}
-.cc-bar-bg{height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:8px}
-.cc-bar-fill{height:100%;border-radius:2px}
-.cc-week{font-size:9px;color:rgba(255,255,255,.25);margin-bottom:7px}
-.cc-btn{width:100%;font-size:9px;font-weight:600;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:4px;color:rgba(255,255,255,.3);cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
+.cc-wl{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4)}
+.cc-bal{font-size:20px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+.cc-prog{height:2px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:8px}
+.cc-prog-fill{height:100%;border-radius:2px}
+.cc-foot{font-size:9px;color:rgba(255,255,255,.25);margin-bottom:7px}
+.cc-settle{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);border-radius:6px;padding:4px;font-size:9px;font-weight:600;cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
 
-/* UPLOAD AREA */
-.upload-wrap{margin:0 14px 14px}
-.upload-box{display:block;background:#0f0f1e;border:1.5px dashed rgba(255,255,255,.1);border-radius:16px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s}
-.upload-box:active{border-color:#6366f1}
-.upload-icon-wrap{width:50px;height:50px;border-radius:14px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:24px}
-.upload-title{font-size:14px;font-weight:600;margin-bottom:4px}
+/* ── UPLOAD ── */
+.upload-wrap{padding:0 12px}
+.upload-lbl{display:block;background:#0d0d1e;border:1.5px dashed rgba(255,255,255,.1);border-radius:15px;padding:24px;text-align:center;cursor:pointer}
+.upload-icon{width:48px;height:48px;border-radius:12px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px}
+.upload-title{font-size:14px;font-weight:600;margin-bottom:3px}
 .upload-sub{font-size:11px;color:rgba(255,255,255,.3)}
-.btn-manual{width:100%;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:11px;border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px}
-.prev-img{width:100%;max-height:220px;object-fit:contain;background:#000;display:block;border-radius:12px;margin-bottom:10px}
-.client-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.cpill{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.cpill.on{font-weight:700}
+.btn-manual{width:100%;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.25);padding:11px;border-radius:11px;font-size:13px;cursor:pointer;margin-top:8px}
+.preview-img{width:100%;max-height:200px;object-fit:contain;background:#000;border-radius:12px;display:block;margin-bottom:10px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pill{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.pill.on{font-weight:700}
 .btn-row{display:flex;gap:8px}
-.btn-p{flex:2;background:#6366f1;border:none;color:#fff;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
-.btn-p:active{opacity:.85}
-.btn-s{flex:1;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:14px;border-radius:12px;font-size:13px;cursor:pointer}
+.btn-analyze{flex:2;background:#6366f1;border:none;color:#fff;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-cancel{flex:1;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:14px;border-radius:12px;font-size:13px;cursor:pointer}
 
-/* PROCESSING */
-.proc{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px;text-align:center}
+/* ── PROCESSING ── */
+.proc{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:15px;padding:20px;text-align:center}
 .proc-title{font-size:14px;font-weight:600;margin-bottom:14px}
-.step{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:rgba(255,255,255,.3);text-align:left}
+.step{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:rgba(255,255,255,.25);text-align:left}
 .step:last-child{border:none}
 .step.done{color:#4ade80}
 .step.act{color:#f1f5f9;font-weight:600}
-.sdot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.step.done .sdot{background:rgba(74,222,128,.15);color:#4ade80}
-.step.act .sdot{background:rgba(99,102,241,.2);color:#818cf8}
+.step-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.step.done .step-dot{background:rgba(74,222,128,.12);color:#4ade80}
+.step.act .step-dot{background:rgba(99,102,241,.18);color:#818cf8}
 
-/* RESULT CARD */
-.res-card{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:10px}
-.res-top{padding:24px;text-align:center}
-.res-top.pr{background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(74,222,128,.03))}
-.res-top.ls{background:linear-gradient(135deg,rgba(248,113,113,.08),rgba(248,113,113,.03))}
+/* ── RESULT ── */
+.res-card{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:15px;overflow:hidden;margin-bottom:10px}
+.res-top{padding:22px;text-align:center}
+.res-top.pr{background:linear-gradient(135deg,rgba(74,222,128,.07),transparent)}
+.res-top.ls{background:linear-gradient(135deg,rgba(248,113,113,.07),transparent)}
 .res-top.pd{background:rgba(251,191,36,.04)}
-.res-label{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
-.res-amt{font-size:42px;font-weight:700;letter-spacing:-1.5px;margin-bottom:6px;line-height:1}
-.res-status{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7}
+.res-label{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.res-amt{font-size:38px;font-weight:700;letter-spacing:-1.5px;margin-bottom:5px;line-height:1}
+.res-status{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.6}
 .res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid rgba(255,255,255,.07)}
-.rs{padding:13px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.07)}
-.rs:last-child{border:none}
-.rs-l{font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
-.rs-v{font-size:13px;font-weight:600}
-.matches{padding:12px}
-.mrow{display:flex;gap:10px;align-items:center;padding:10px;background:rgba(255,255,255,.02);border-radius:10px;margin-bottom:5px;border-left:3px solid rgba(255,255,255,.08)}
-.mrow.w{border-left-color:#dc2626}
-.mrow.l{border-left-color:#4ade80}
-.mrow.v{border-left-color:#fbbf24}
-.mt{font-size:12px;font-weight:600;margin-bottom:2px}
-.mm{font-size:10px;color:rgba(255,255,255,.3)}
-.mi{font-size:20px}
-.obs{display:flex;gap:3px;margin-top:5px}
-.ob{flex:1;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);padding:3px;border-radius:5px;font-size:9px;cursor:pointer}
+.rss{padding:12px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.07)}
+.rss:last-child{border:none}
+.rss-l{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.rss-v{font-size:13px;font-weight:600}
+.match-list{padding:10px 10px 0}
+.match-row{display:flex;align-items:center;gap:10px;padding:9px;background:rgba(255,255,255,.02);border-radius:9px;margin-bottom:5px;border-left:3px solid rgba(255,255,255,.07)}
+.match-row.w{border-left-color:#dc2626}
+.match-row.l{border-left-color:#16a34a}
+.match-row.v{border-left-color:#d97706}
+.match-txt{flex:1}
+.match-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.match-sub{font-size:10px;color:rgba(255,255,255,.3)}
+.match-icon{font-size:18px}
+.override-btns{display:flex;gap:3px;margin-top:4px}
+.ob{flex:1;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.25);padding:3px;border-radius:5px;font-size:9px;cursor:pointer}
 .ob.w{border-color:rgba(248,113,113,.3);color:#f87171}
 .ob.l{border-color:rgba(74,222,128,.3);color:#4ade80}
 .ob.p{border-color:rgba(251,191,36,.3);color:#fbbf24}
-.save-btn{display:block;width:calc(100% - 24px);margin:0 12px 12px;padding:13px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-align:center;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.08);color:#4ade80}
-.new-slip-btn{display:block;width:calc(100% - 24px);margin:0 12px 12px;padding:12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3)}
+.btn-save{display:block;width:calc(100% - 20px);margin:0 10px 10px;padding:12px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;text-align:center;border:1px solid rgba(74,222,128,.2);background:rgba(74,222,128,.07);color:#4ade80}
+.btn-new-slip{display:block;width:calc(100% - 20px);margin:0 10px 12px;padding:11px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(255,255,255,.25)}
 
-/* ERROR */
-.err-box{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:12px;padding:14px}
-.err-msg{font-size:12px;color:rgba(248,113,113,.9);line-height:1.5;margin-bottom:8px}
+/* ── ERROR ── */
+.err{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.18);border-radius:12px;padding:14px}
+.err-msg{font-size:12px;color:#fca5a5;line-height:1.5;margin-bottom:8px}
 .err-close{background:transparent;border:1px solid rgba(248,113,113,.2);color:#f87171;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px}
 
-/* CLIENT PAGE */
-.cp-back{background:transparent;border:none;color:rgba(255,255,255,.3);font-size:13px;cursor:pointer;padding:16px 14px 10px;display:block}
-.cp-header{padding:0 14px 14px;display:flex;justify-content:space-between;align-items:center}
+/* ── CLIENT PAGE ── */
+.cp-back{background:transparent;border:none;color:rgba(255,255,255,.3);font-size:13px;cursor:pointer;padding:14px 12px 8px;display:block}
+.cp-hdr{padding:0 12px 14px;display:flex;justify-content:space-between;align-items:center}
 .cp-name{font-size:18px;font-weight:700}
 .cp-actions{display:flex;gap:6px}
-.cp-act{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:500}
-.cp-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px;margin-bottom:12px}
-.cp-stat{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:11px;text-align:center}
-.cp-stat-l{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
-.cp-stat-v{font-size:16px;font-weight:700}
-.cp-chart-wrap{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin:0 14px 12px}
-.cp-chart-title{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
-.slip-item{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;margin:0 14px 7px;cursor:pointer}
+.cp-btn{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:6px 11px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:500}
+.cp-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:0 12px;margin-bottom:11px}
+.cp-stat{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center}
+.cp-stat-l{font-size:9px;color:rgba(255,255,255,.25);margin-bottom:2px;text-transform:uppercase;letter-spacing:.08em}
+.cp-stat-v{font-size:15px;font-weight:700}
+.cp-chart{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:12px;margin:0 12px 11px}
+.cp-chart-t{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px}
+
+/* ── SLIPS ── */
+.slip{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:11px;margin:0 12px 7px}
 .slip-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
-.slip-info{font-size:11px;color:rgba(255,255,255,.35)}
-.slip-right{display:flex;align-items:center;gap:8px}
-.slip-amt{font-size:17px;font-weight:700}
-.slip-del{width:26px;height:26px;border-radius:7px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.15);color:rgba(248,113,113,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0}
-.slip-matches{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px;line-height:1.5}
-.slip-bottom{display:flex;justify-content:space-between;align-items:center}
-.slip-meta{font-size:10px;color:rgba(255,255,255,.2)}
-.slip-tag{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600}
+.slip-meta{font-size:10px;color:rgba(255,255,255,.3)}
+.slip-right{display:flex;align-items:center;gap:7px}
+.slip-amt{font-size:16px;font-weight:700}
+.slip-del{width:26px;height:26px;border-radius:7px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.14);color:rgba(248,113,113,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;flex-shrink:0}
+.slip-matches{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:4px;line-height:1.5}
+.slip-foot{display:flex;justify-content:space-between;align-items:center}
+.slip-stake{font-size:10px;color:rgba(255,255,255,.2)}
+.slip-tag{font-size:9px;padding:2px 8px;border-radius:7px;font-weight:600}
 .slip-tag.g{background:rgba(74,222,128,.1);color:#4ade80}
 .slip-tag.r{background:rgba(248,113,113,.1);color:#f87171}
 .slip-tag.p{background:rgba(251,191,36,.1);color:#fbbf24}
-.slip-img-hidden{display:none}
-.slip-img-visible{width:100%;border-radius:8px;margin-top:8px;max-height:200px;object-fit:contain;background:#000}
 
-/* LIVE */
-.live-card{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:14px;margin:0 14px 8px}
-.lc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.lc-live{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#f87171}
-.lc-league{font-size:10px;color:rgba(255,255,255,.3)}
+/* ── LIVE ── */
+.live-card{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px;margin:0 12px 7px}
+.lc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.lc-live-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#f87171}
+.lc-dot{width:6px;height:6px;border-radius:50%;background:#f87171;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.lc-sport{font-size:10px;color:rgba(255,255,255,.25)}
 .lc-score{display:flex;justify-content:space-between;align-items:center}
-.lc-team{font-size:13px;font-weight:700;max-width:100px}
-.lc-num{font-size:28px;font-weight:700;letter-spacing:-1px}
-.lc-upcoming{color:rgba(255,255,255,.3);font-size:11px;font-weight:500}
+.lc-team{font-size:13px;font-weight:700}
+.lc-num{font-size:26px;font-weight:700;letter-spacing:-.5px}
 
-/* HISTORY */
-.hist-item{background:#0f0f1e;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px;margin:0 14px 8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.hist-left{}
-.hist-name{font-size:13px;font-weight:700}
-.hist-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px}
-.hist-right{text-align:right}
-.hist-bal{font-size:20px;font-weight:700}
-.hist-total{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px}
+/* ── HISTORY ── */
+.hist-item{background:#0d0d1e;border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:12px;margin:0 12px 7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.hi-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.hi-sub{font-size:10px;color:rgba(255,255,255,.25)}
+.hi-bal{font-size:19px;font-weight:700;text-align:right;margin-bottom:2px}
+.hi-slips{font-size:10px;color:rgba(255,255,255,.25);text-align:right}
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-.modal{background:#10101f;border-radius:20px 20px 0 0;padding:22px 20px;width:100%;max-width:430px;max-height:85vh;overflow-y:auto}
-.modal-title{font-size:16px;font-weight:700;margin-bottom:18px;text-align:center}
-.field{margin-bottom:13px}
-.field label{font-size:10px;color:rgba(255,255,255,.35);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
-.field input,.field textarea,.field select{width:100%;background:#0f0f1e;border:1px solid rgba(255,255,255,.1);color:#f1f5f9;padding:11px 13px;border-radius:10px;font-size:14px;outline:none;font-family:inherit;-webkit-appearance:none}
-.field textarea{resize:none;height:70px}
-.color-row{display:flex;gap:8px;flex-wrap:wrap}
-.color-dot{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s}
-.color-dot.on{border-color:#fff}
-.modal-btns{display:flex;gap:8px;margin-top:18px}
-.mbtn{flex:1;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none}
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:#0f0f1f;border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:430px;max-height:85vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
+.field{margin-bottom:12px}
+.field label{font-size:10px;color:rgba(255,255,255,.3);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.09em;font-weight:600}
+.field input,.field select,.field textarea{width:100%;background:#0a0a18;border:1px solid rgba(255,255,255,.1);color:#f1f5f9;padding:11px 13px;border-radius:9px;font-size:14px;outline:none;font-family:inherit;-webkit-appearance:none}
+.field textarea{resize:none;height:65px}
+.colors{display:flex;gap:8px;flex-wrap:wrap}
+.color-opt{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s}
+.color-opt.on{border-color:#fff}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.mbtn{flex:1;padding:12px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;border:none}
 .mbtn.p{background:#6366f1;color:#fff}
-.mbtn.c{background:#0f0f1e;color:rgba(255,255,255,.3)}
-.mbtn.d{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2)}
-
-/* Settle summary */
-.settle-bal{font-size:30px;font-weight:700;text-align:center;margin:12px 0}
+.mbtn.c{background:#0d0d1e;color:rgba(255,255,255,.3)}
+.mbtn.d{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)}
 </style>
 </head>
 <body>
 
-<!-- PAGE: MAIN -->
+<!-- MAIN PAGE -->
 <div id="pg-main" class="pg on">
   <div class="hero">
-    <div class="live-pill"><div class="live-dot"></div>На живо</div>
-    <div class="hero-label">Общо всички клиенти</div>
-    <div class="hero-amount" id="h-total">0 лв.</div>
-    <div class="stats-row">
-      <div class="stat"><div class="stat-l">Win rate</div><div class="stat-v" id="h-wr">—</div></div>
-      <div class="stat"><div class="stat-l">Фишове</div><div class="stat-v" id="h-slips">0</div></div>
-      <div class="stat"><div class="stat-l">Загуби</div><div class="stat-v" id="h-losses" style="color:#f87171">0</div></div>
-      <div class="stat"><div class="stat-l">Печалби</div><div class="stat-v" id="h-wins" style="color:#4ade80">0</div></div>
+    <div class="hero-label">Общо</div>
+    <div class="hero-total" id="h-total">0 лв.</div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-l">Win rate</div><div class="hs-v" id="h-wr">—</div></div>
+      <div class="hs"><div class="hs-l">Фишове</div><div class="hs-v" id="h-slips">0</div></div>
+      <div class="hs"><div class="hs-l">Печалби</div><div class="hs-v" id="h-wins" style="color:#4ade80">0</div></div>
+      <div class="hs"><div class="hs-l">Загуби</div><div class="hs-v" id="h-losses" style="color:#f87171">0</div></div>
     </div>
-    <div class="chart-title">Последните 14 дни</div>
+    <div class="hero-chart-label">14 дни</div>
     <div class="bars" id="main-bars"></div>
   </div>
-
   <div class="sec-h">
-    <div class="sec-title">Клиенти</div>
-    <button type="button" class="btn-add" onclick="openAddClient()">+ Нов клиент</button>
+    <div class="sec-t">Клиенти</div>
+    <button type="button" class="btn-new" onclick="openAddClient()">+ Нов</button>
   </div>
-  <div class="grid2" id="clients-grid"></div>
-
+  <div class="grid" id="clients-grid"></div>
   <div class="upload-wrap">
     <div id="u-idle">
-      <label class="upload-box" for="fin">
-        <div class="upload-icon-wrap">📷</div>
+      <label class="upload-lbl" for="f-img">
+        <div class="upload-icon">📷</div>
         <div class="upload-title">Качи снимка на фиш</div>
-        <div class="upload-sub">bet365 · PNG · JPG · HEIC</div>
+        <div class="upload-sub">bet365 · JPEG · PNG · HEIC</div>
       </label>
-      <input type="file" id="fin" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
+      <input type="file" id="f-img" accept="image/*" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
       <button type="button" class="btn-manual" onclick="openManual()">+ Добави ръчно</button>
     </div>
     <div id="u-preview" style="display:none">
-      <img id="prev-img" class="prev-img" src="" alt="">
-      <div style="margin-bottom:8px">
-        <div class="sec-title" style="margin-bottom:6px;padding:0">Избери клиент:</div>
-        <div class="client-pills" id="client-pills"></div>
-      </div>
+      <img id="u-prev-img" class="preview-img" src="" alt="">
+      <div class="sec-t" style="padding:0 0 6px">Избери клиент:</div>
+      <div class="pills" id="client-pills"></div>
       <div class="btn-row">
-        <button type="button" class="btn-p" onclick="doAnalyze()">⚡ АНАЛИЗИРАЙ</button>
-        <button type="button" class="btn-s" onclick="resetUpload()">✕</button>
+        <button type="button" class="btn-analyze" onclick="doAnalyze()">⚡ Анализирай</button>
+        <button type="button" class="btn-cancel" onclick="resetUpload()">✕</button>
       </div>
     </div>
     <div id="u-proc" style="display:none">
       <div class="proc">
         <div class="proc-title">Обработвам...</div>
-        <div id="steps-wrap"></div>
+        <div id="steps"></div>
       </div>
     </div>
     <div id="u-err" style="display:none">
-      <div class="err-box">
+      <div class="err">
         <div class="err-msg" id="err-text"></div>
         <button type="button" class="err-close" onclick="hideErr()">Затвори</button>
       </div>
@@ -261,55 +240,50 @@ body{background:#07070f;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
   </div>
 </div>
 
-<!-- PAGE: LIVE -->
+<!-- LIVE PAGE -->
 <div id="pg-live" class="pg">
-  <div style="padding:16px 14px 8px;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:18px;font-weight:700">На живо</div>
-    <button type="button" class="btn-add" onclick="loadLive()">↻ Обнови</button>
+  <div style="padding:14px 12px 8px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:17px;font-weight:700">На живо</div>
+    <button type="button" class="btn-new" onclick="loadLive()">↻</button>
   </div>
-  <div id="live-content">
-    <div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Зарежда...</div>
-  </div>
+  <div id="live-wrap"></div>
 </div>
 
-<!-- PAGE: HISTORY -->
+<!-- HISTORY PAGE -->
 <div id="pg-hist" class="pg">
-  <div style="padding:16px 14px 8px;font-size:18px;font-weight:700">История</div>
-  <div id="hist-content"></div>
+  <div style="padding:14px 12px 8px;font-size:17px;font-weight:700">История</div>
+  <div id="hist-wrap"></div>
 </div>
 
-<!-- PAGE: CLIENT -->
+<!-- CLIENT PAGE -->
 <div id="pg-client" class="pg">
   <button type="button" class="cp-back" onclick="showPage('main')">← Назад</button>
-  <div class="cp-header">
+  <div class="cp-hdr">
     <div class="cp-name" id="cp-name">—</div>
     <div class="cp-actions">
-      <button type="button" class="cp-act" onclick="openEditClient()">✏️ Редактирай</button>
+      <button type="button" class="cp-btn" onclick="openEditClient()">✏️</button>
+      <button type="button" class="cp-btn" style="color:#f87171;border-color:rgba(248,113,113,.2)" onclick="openSettle()">Нулирай</button>
     </div>
   </div>
   <div class="cp-stats">
     <div class="cp-stat"><div class="cp-stat-l">Баланс</div><div class="cp-stat-v" id="cp-bal">0</div></div>
-    <div class="cp-stat"><div class="cp-stat-l">Тотал</div><div class="cp-stat-v" id="cp-tot">0</div></div>
-    <div class="cp-stat"><div class="cp-stat-l">Фишове</div><div class="cp-stat-v" id="cp-slips">0</div></div>
+    <div class="cp-stat"><div class="cp-stat-l">Фишове</div><div class="cp-stat-v" id="cp-total-slips">0</div></div>
+    <div class="cp-stat"><div class="cp-stat-l">Win rate</div><div class="cp-stat-v" id="cp-wr">—</div></div>
   </div>
-  <div class="cp-chart-wrap">
-    <div class="cp-chart-title">Прогрес по дни</div>
-    <div class="bars" id="client-bars"></div>
+  <div class="cp-chart">
+    <div class="cp-chart-t">Прогрес по дни</div>
+    <div class="bars" id="cp-bars"></div>
   </div>
-  <div style="padding:0 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
-    <div class="sec-title">История на фишовете</div>
-    <div style="display:flex;gap:6px">
-      <button type="button" class="cp-act" onclick="openSettle()">Нулирай сметка</button>
-      <button type="button" class="cp-act" style="color:#f87171;border-color:rgba(248,113,113,.2)" onclick="doDeleteClient()">Изтрий</button>
-    </div>
+  <div style="padding:0 12px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center">
+    <div class="sec-t">Фишове</div>
   </div>
-  <div id="client-slips"></div>
+  <div id="cp-slips"></div>
 </div>
 
-<!-- NAV -->
+<!-- NAVIGATION -->
 <nav class="nav">
   <button type="button" class="nb on" id="nb-main" onclick="showPage('main')">
-    <span class="nb-i">📷</span><span class="nb-l" style="color:#818cf8">Фиш</span>
+    <span class="nb-i">📷</span><span class="nb-l">Фиш</span>
   </button>
   <button type="button" class="nb" id="nb-live" onclick="showPage('live')">
     <span class="nb-i">🔴</span><span class="nb-l">На живо</span>
@@ -320,7 +294,7 @@ body{background:#07070f;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
 </nav>
 
 <!-- MODAL -->
-<div id="modal-overlay" style="display:none" class="modal-overlay">
+<div id="modal-bg" style="display:none" class="modal-bg">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title" id="modal-title"></div>
     <div id="modal-body"></div>
@@ -328,466 +302,320 @@ body{background:#07070f;color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFo
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────
-var CLIENTS = [];
-var selClient = null;   // selected for upload
-var curClient = null;   // open in client page
-var imgFile   = null;
+// ── STATE ──────────────────────────────────────────────────
+var CLIENTS_DATA = [];
+var selClient = null;
+var curClient = null;
 var curResult = null;
+var imgFile   = null;
+var COLORS = ['#6366f1','#3b82f6','#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#ec4899'];
 
-var COLORS = ['#6366f1','#3b82f6','#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#ec4899','#06b6d4','#84cc16'];
-
-// ─── WEBSOCKET ───────────────────────────────────────────
+// ── WEBSOCKET ──────────────────────────────────────────────
 var ws;
 function connectWS() {
   try {
     var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     ws = new WebSocket(proto + '//' + location.host);
-    ws.onclose = function() { setTimeout(connectWS, 3000); };
-    ws.onerror = function() {};
-    ws.onmessage = function(e) {
+    ws.onclose = function () { setTimeout(connectWS, 3000); };
+    ws.onerror = function () {};
+    ws.onmessage = function (e) {
       try {
         var d = JSON.parse(e.data);
-        var refresh = ['new_slip','slip_updated','slip_deleted','client_settled'];
-        if (refresh.indexOf(d.type) >= 0) {
+        if (d.type === 'new_slip' || d.type === 'slip_updated' || d.type === 'slip_deleted' || d.type === 'client_settled') {
           loadDashboard();
-          if (curClient && String(d.client_id) === String(curClient.id)) {
-            loadClientSlips(curClient.id);
-          }
+          if (curClient) loadClientSlips(curClient);
         }
-      } catch(ex) {}
+      } catch (ex) {}
     };
-  } catch(err) { setTimeout(connectWS, 3000); }
+  } catch (err) { setTimeout(connectWS, 3000); }
 }
 connectWS();
 
-// ─── PAGES ───────────────────────────────────────────────
+// ── HELPERS ────────────────────────────────────────────────
 function showPage(p) {
-  var pages = ['main','live','hist','client'];
-  for (var i = 0; i < pages.length; i++) {
-    var x = pages[i];
+  ['main','live','hist','client'].forEach(function (x) {
     var pg = document.getElementById('pg-' + x);
     var nb = document.getElementById('nb-' + x);
     if (pg) pg.className = 'pg' + (x === p ? ' on' : '');
     if (nb) nb.className = 'nb' + (x === p ? ' on' : '');
-  }
+  });
   if (p === 'live') loadLive();
   if (p === 'hist') loadHist();
 }
 
-function showEl(id, v) {
+function show(id, v) {
   var el = document.getElementById(id);
   if (el) el.style.display = v ? 'block' : 'none';
 }
 
-// ─── DASHBOARD ───────────────────────────────────────────
-function loadDashboard() {
-  fetch('/api/clients').then(function(r) { return r.json(); }).then(function(data) {
-    CLIENTS = data;
-    var totalBal = 0, totalWins = 0, totalLosses = 0, totalSlips = 0;
-    for (var i = 0; i < CLIENTS.length; i++) {
-      totalBal    += Number(CLIENTS[i].balance || 0);
-      totalWins   += Number(CLIENTS[i].wins    || 0);
-      totalLosses += Number(CLIENTS[i].losses  || 0);
-      totalSlips  += Number(CLIENTS[i].total_slips || 0);
-    }
-    var tot = totalWins + totalLosses;
-    var hTotal = document.getElementById('h-total');
-    hTotal.textContent = (totalBal >= 0 ? '+' : '') + Math.round(totalBal) + ' лв.';
-    hTotal.style.color = totalBal >= 0 ? '#4ade80' : '#f87171';
-    document.getElementById('h-wr').textContent     = tot > 0 ? Math.round(totalWins/tot*100) + '%' : '—';
-    document.getElementById('h-slips').textContent  = totalSlips;
-    document.getElementById('h-wins').textContent   = totalWins;
-    document.getElementById('h-losses').textContent = totalLosses;
-    renderClients();
-    updatePills();
-    loadMainChart();
-  }).catch(function(e) { console.error('loadDashboard:', e.message); });
-}
-
-function renderClients() {
-  var grid = document.getElementById('clients-grid');
-  grid.innerHTML = '';
-  for (var i = 0; i < CLIENTS.length; i++) {
-    var c   = CLIENTS[i];
-    var bal = Number(c.balance || 0);
-    var cls = bal > 0 ? 'g' : bal < 0 ? 'r' : '';
-    var nc  = bal > 0 ? '#4ade80' : bal < 0 ? '#f87171' : 'rgba(255,255,255,.25)';
-    var div = document.createElement('div');
-    div.className = 'cc' + (cls ? ' ' + cls : '');
-    div.innerHTML =
-      '<div class="cc-top">' +
-        '<div class="cc-name" style="color:' + nc + '">' + c.name + '</div>' +
-        '<span class="cc-badge ' + (cls || 'n') + '">' + c.wins + 'W ' + c.losses + 'L</span>' +
-      '</div>' +
-      '<div class="cc-amt" style="color:' + nc + '">' + (bal >= 0 ? '+' : '') + Math.round(bal) + ' лв.</div>' +
-      '<div class="cc-bar-bg"><div class="cc-bar-fill" style="width:' + Math.min(100, Math.abs(bal)/8) + '%;background:' + nc + ';opacity:.35"></div></div>' +
-      '<div class="cc-week" style="margin-bottom:7px">Тотал: <span style="color:' + nc + '">' + (Number(c.total||0)>=0?'+':'') + Math.round(Number(c.total||0)) + ' лв.</span></div>' +
-      '<button type="button" class="cc-btn" onclick="event.stopPropagation();quickSettle(' + c.id + ')">Нулирай сметка</button>';
-    (function(client) { div.onclick = function() { openClientPage(client); }; })(c);
-    grid.appendChild(div);
-  }
-}
-
-function loadMainChart() {
-  fetch('/api/chart').then(function(r) { return r.json(); }).then(function(data) {
-    renderBars('main-bars', data);
-  }).catch(function() {});
-}
-
-function renderBars(id, data) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  if (!data || !data.length) { el.innerHTML = ''; return; }
-  var max = 1;
-  for (var i = 0; i < data.length; i++) {
-    var v = Math.abs(Number(data[i].amount || 0));
-    if (v > max) max = v;
-  }
-  var html = '';
-  for (var i = 0; i < data.length; i++) {
-    var amt = Number(data[i].amount || 0);
-    var h   = Math.max(2, Math.round(Math.abs(amt) / max * 48));
-    var cls = amt > 0 ? 'g' : amt < 0 ? 'r' : 'z';
-    var day = data[i].date ? String(data[i].date).slice(8) : '';
-    html += '<div class="bc"><div class="bar ' + cls + '" style="height:' + h + 'px"></div><div class="bar-d">' + day + '</div></div>';
-  }
-  el.innerHTML = html;
-}
-
-// ─── CLIENT PAGE ─────────────────────────────────────────
-function openClientPage(c) {
-  curClient = c;
-  showPage('client');
-  var bal = Number(c.balance || 0);
-  var tot = Number(c.total   || 0);
-  var nc  = bal >= 0 ? '#4ade80' : '#f87171';
-  var nt  = tot >= 0 ? '#4ade80' : '#f87171';
-  document.getElementById('cp-name').textContent = c.name;
-  document.getElementById('cp-name').style.color = nc;
-  document.getElementById('cp-bal').textContent   = (bal>=0?'+':'') + Math.round(bal) + ' лв.';
-  document.getElementById('cp-bal').style.color   = nc;
-  document.getElementById('cp-tot').textContent   = (tot>=0?'+':'') + Math.round(tot) + ' лв.';
-  document.getElementById('cp-tot').style.color   = nt;
-  document.getElementById('cp-slips').textContent = c.total_slips || 0;
-  // Load chart
-  fetch('/api/clients/' + c.id + '/chart').then(function(r){ return r.json(); }).then(function(data){
-    renderBars('client-bars', data);
-  }).catch(function(){});
-  loadClientSlips(c.id);
-}
-
-function loadClientSlips(clientId) {
-  fetch('/api/clients/' + clientId + '/slips').then(function(r){ return r.json(); }).then(function(slips){
-    var el = document.getElementById('client-slips');
-    if (!slips || !slips.length) {
-      el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Няма фишове</div>';
-      return;
-    }
-    var html = '';
-    for (var i = 0; i < slips.length; i++) {
-      var s       = slips[i];
-      var isP     = s.is_profit;
-      var isPend  = s.result === 'PENDING';
-      var ac      = isPend ? '#fbbf24' : isP ? '#4ade80' : '#f87171';
-      var amtTxt  = isPend ? '⏳' : ((isP?'+':'-') + Math.round(Number(s.our_amount)) + ' лв.');
-      var tagCls  = isPend ? 'p' : isP ? 'g' : 'r';
-      var tagTxt  = isPend ? 'Изчакване' : isP ? 'Загубен фиш' : 'Спечелен фиш';
-      var ms      = '';
-      var matches = s.matches || [];
-      for (var j = 0; j < matches.length; j++) {
-        if (ms) ms += ' · ';
-        ms += matches[j].display || '';
-      }
-      var dateStr = s.slip_date ? String(s.slip_date).slice(0,10) : '';
-      html +=
-        '<div class="slip-item" id="slip-' + s.id + '">' +
-          '<div class="slip-top">' +
-            '<div class="slip-info">' + dateStr + (s.total_odds ? ' · x' + s.total_odds : '') + '</div>' +
-            '<div class="slip-right">' +
-              '<div class="slip-amt" style="color:' + ac + '">' + amtTxt + '</div>' +
-              '<div class="slip-del" onclick="delSlip(\'' + s.id + '\')">🗑</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="slip-matches">' + (ms || '—') + '</div>' +
-          '<div class="slip-bottom">' +
-            '<div class="slip-meta">' + Math.round(Number(s.stake)) + ' лв. залог</div>' +
-            '<span class="slip-tag ' + tagCls + '">' + tagTxt + '</span>' +
-          '</div>' +
-        '</div>';
-    }
-    el.innerHTML = html;
-  }).catch(function(){
-    document.getElementById('client-slips').innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:30px">Грешка</div>';
+function apiFetch(url, opts) {
+  return fetch(url, opts).then(function (r) {
+    return r.text().then(function (txt) {
+      var data;
+      try { data = JSON.parse(txt); } catch (e) { throw new Error('Bad response'); }
+      if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+      return data;
+    });
   });
 }
 
-function delSlip(id) {
+function fmtBal(n) {
+  return (n >= 0 ? '+' : '') + Math.round(n) + ' лв.';
+}
+
+function balColor(n) { return n > 0 ? '#4ade80' : n < 0 ? '#f87171' : 'rgba(255,255,255,.3)'; }
+
+// ── RENDER BARS ────────────────────────────────────────────
+function renderBars(id, data) {
+  var el = document.getElementById(id);
+  if (!el || !data || !data.length) { if (el) el.innerHTML = ''; return; }
+  var max = 1;
+  data.forEach(function (d) { var v = Math.abs(Number(d.amount)); if (v > max) max = v; });
+  el.innerHTML = data.map(function (d) {
+    var amt = Number(d.amount);
+    var h   = Math.max(2, Math.round(Math.abs(amt) / max * 44));
+    var cls = amt > 0 ? 'g' : amt < 0 ? 'r' : 'z';
+    var day = String(d.date || '').slice(8);
+    return '<div class="bar-col"><div class="bar ' + cls + '" style="height:' + h + 'px"></div><div class="bar-d">' + day + '</div></div>';
+  }).join('');
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────
+function loadDashboard() {
+  apiFetch('/api/clients').then(function (data) {
+    CLIENTS_DATA = data;
+    var totalBal = 0, wins = 0, losses = 0, slips = 0;
+    data.forEach(function (c) {
+      totalBal += Number(c.balance || 0);
+      wins     += Number(c.wins || 0);
+      losses   += Number(c.losses || 0);
+      slips    += Number(c.total_slips || 0);
+    });
+    var tot = wins + losses;
+    var hTotal = document.getElementById('h-total');
+    hTotal.textContent = fmtBal(totalBal);
+    hTotal.style.color = balColor(totalBal);
+    document.getElementById('h-wr').textContent     = tot > 0 ? Math.round(wins / tot * 100) + '%' : '—';
+    document.getElementById('h-slips').textContent  = slips;
+    document.getElementById('h-wins').textContent   = wins;
+    document.getElementById('h-losses').textContent = losses;
+    renderGrid();
+    updatePills();
+    apiFetch('/api/chart').then(function (ch) { renderBars('main-bars', ch); }).catch(function () {});
+  }).catch(function (e) {
+    console.error('loadDashboard:', e.message);
+  });
+}
+
+function renderGrid() {
+  var el = document.getElementById('clients-grid');
+  el.innerHTML = CLIENTS_DATA.map(function (c) {
+    var bal = Number(c.balance || 0);
+    var nc  = balColor(bal);
+    var bc  = bal > 0 ? 'rgba(74,222,128,.35)' : bal < 0 ? 'rgba(248,113,113,.35)' : 'rgba(255,255,255,.1)';
+    var prog = Math.min(100, Math.abs(bal) / 10);
+    return '<div class="cc" onclick="openClientPage(' + c.id + ')">' +
+      '<div class="cc-head"><div class="cc-name" style="color:' + nc + '">' + c.name + '</div>' +
+      '<span class="cc-wl">' + c.wins + 'W ' + c.losses + 'L</span></div>' +
+      '<div class="cc-bal" style="color:' + nc + '">' + fmtBal(bal) + '</div>' +
+      '<div class="cc-prog"><div class="cc-prog-fill" style="width:' + prog + '%;background:' + bc + '"></div></div>' +
+      '<div class="cc-foot">' + c.total_slips + ' фиша</div>' +
+      '<button type="button" class="cc-settle" onclick="event.stopPropagation();quickSettle(' + c.id + ')">Нулирай сметка</button>' +
+      '</div>';
+  }).join('');
+}
+
+// ── CLIENT PAGE ────────────────────────────────────────────
+function openClientPage(id) {
+  var c = null;
+  CLIENTS_DATA.forEach(function (x) { if (x.id === id) c = x; });
+  if (!c) return;
+  curClient = c;
+  showPage('client');
+  var bal = Number(c.balance || 0);
+  var nc  = balColor(bal);
+  var tot = c.wins + c.losses;
+  document.getElementById('cp-name').textContent = c.name;
+  document.getElementById('cp-name').style.color = nc;
+  document.getElementById('cp-bal').textContent = fmtBal(bal);
+  document.getElementById('cp-bal').style.color = nc;
+  document.getElementById('cp-total-slips').textContent = c.total_slips;
+  document.getElementById('cp-wr').textContent = tot > 0 ? Math.round(c.wins / tot * 100) + '%' : '—';
+  apiFetch('/api/clients/' + id + '/chart').then(function (ch) { renderBars('cp-bars', ch); }).catch(function () {});
+  loadClientSlips(c);
+}
+
+function loadClientSlips(c) {
+  apiFetch('/api/clients/' + c.id + '/slips').then(function (slips) {
+    var el = document.getElementById('cp-slips');
+    if (!slips.length) { el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px">Няма фишове</div>'; return; }
+    el.innerHTML = slips.map(function (s) {
+      var isP = s.is_profit, isPend = s.result === 'PENDING';
+      var ac  = isPend ? '#fbbf24' : isP ? '#4ade80' : '#f87171';
+      var tc  = isPend ? 'p' : isP ? 'g' : 'r';
+      var tt  = isPend ? 'Изчакване' : isP ? 'Загубен фиш' : 'Спечелен фиш';
+      var amtTxt = isPend ? '⏳ —' : fmtBal(isP ? s.our_amount : -s.our_amount);
+      var ms = s.matches && s.matches[0] && s.matches[0].display ? s.matches[0].display : '—';
+      var dateStr = String(s.slip_date || '').slice(0, 10);
+      return '<div class="slip">' +
+        '<div class="slip-top"><div class="slip-meta">' + dateStr + (s.total_odds ? ' · x' + s.total_odds : '') + '</div>' +
+        '<div class="slip-right">' +
+        '<div class="slip-amt" style="color:' + ac + '">' + amtTxt + '</div>' +
+        '<div class="slip-del" onclick="delSlip(\'' + s.id + '\',\'' + s.tableId + '\')">🗑</div>' +
+        '</div></div>' +
+        '<div class="slip-matches">' + ms + '</div>' +
+        '<div class="slip-foot"><div class="slip-stake">' + Math.round(s.stake) + ' лв. залог</div>' +
+        '<span class="slip-tag ' + tc + '">' + tt + '</span></div>' +
+        '</div>';
+    }).join('');
+  }).catch(function () {
+    document.getElementById('cp-slips').innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px">Грешка</div>';
+  });
+}
+
+function delSlip(atId, tableId) {
   if (!confirm('Изтрий фиша?')) return;
-  fetch('/api/slips/' + id, { method: 'DELETE' }).then(function() {
-    var el = document.getElementById('slip-' + id);
-    if (el) el.remove();
-    loadDashboard();
-  }).catch(function(e) { alert('Грешка: ' + e.message); });
-}
-
-function openEditClient() {
-  if (!curClient) return;
-  var c = curClient;
-  var colorHtml = '';
-  for (var i = 0; i < COLORS.length; i++) {
-    var col = COLORS[i];
-    colorHtml += '<div class="color-dot' + (col === c.color ? ' on' : '') + '" data-color="' + col + '" style="background:' + col + '" onclick="pickColor(this,\'edit-colors\')"></div>';
-  }
-  openModal('Редактирай клиент',
-    '<div class="field"><label>Име</label><input id="e-name" value="' + c.name + '"></div>' +
-    '<div class="field"><label>Цвят</label><div class="color-row" id="edit-colors">' + colorHtml + '</div></div>' +
-    '<div class="modal-btns">' +
-      '<button type="button" class="mbtn c" onclick="closeModal()">Отказ</button>' +
-      '<button type="button" class="mbtn p" onclick="saveEdit(' + c.id + ')">Запази</button>' +
-    '</div>'
-  );
-}
-
-function saveEdit(id) {
-  var name = document.getElementById('e-name').value.trim();
-  if (!name) { alert('Въведи име'); return; }
-  var sel = document.querySelector('#edit-colors .color-dot.on');
-  var color = sel ? sel.getAttribute('data-color') : '#6366f1';
-  fetch('/api/clients/' + id, {
-    method: 'PATCH', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ name: name, color: color })
-  }).then(function(r){ return r.json(); }).then(function(updated){
-    // Update locally
-    for (var i = 0; i < CLIENTS.length; i++) {
-      if (CLIENTS[i].id === id) { CLIENTS[i].name = name; CLIENTS[i].color = color; break; }
-    }
-    if (curClient && curClient.id === id) { curClient.name = name; curClient.color = color; }
-    closeModal();
-    openClientPage(curClient);
-    loadDashboard();
-  }).catch(function(e){ alert('Грешка: ' + e.message); });
-}
-
-function doDeleteClient() {
-  if (!curClient) return;
-  if (!confirm('Изтрий клиент ' + curClient.name + '?')) return;
-  fetch('/api/clients/' + curClient.id, { method: 'DELETE' })
-    .then(function(){ showPage('main'); loadDashboard(); })
-    .catch(function(e){ alert('Грешка: ' + e.message); });
+  apiFetch('/api/slips/' + atId + '?tableId=' + tableId, { method: 'DELETE' })
+    .then(function () { loadDashboard(); if (curClient) loadClientSlips(curClient); })
+    .catch(function (e) { alert('Грешка: ' + e.message); });
 }
 
 function openSettle() {
   if (!curClient) return;
   var bal = Number(curClient.balance || 0);
-  var nc  = bal >= 0 ? '#4ade80' : '#f87171';
   openModal('Нулирай сметка',
-    '<div style="text-align:center;margin-bottom:14px">' +
-      '<div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:6px">Текущ баланс на ' + curClient.name + '</div>' +
-      '<div class="settle-bal" style="color:' + nc + '">' + (bal>=0?'+':'') + Math.round(bal) + ' лв.</div>' +
-    '</div>' +
+    '<div style="text-align:center;font-size:28px;font-weight:700;margin:12px 0;color:' + balColor(bal) + '">' + fmtBal(bal) + '</div>' +
+    '<div style="font-size:12px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:16px">Баланс на ' + curClient.name + '</div>' +
     '<div class="field"><label>Бележка</label><input id="settle-note" placeholder="Платено в брой..."></div>' +
     '<div class="modal-btns">' +
       '<button type="button" class="mbtn c" onclick="closeModal()">Отказ</button>' +
-      '<button type="button" class="mbtn p" onclick="doSettle()">Нулирай</button>' +
+      '<button type="button" class="mbtn p" onclick="doSettle()">Потвърди нулиране</button>' +
     '</div>'
   );
 }
 
 function doSettle() {
-  var note = document.getElementById('settle-note') ? document.getElementById('settle-note').value : '';
-  fetch('/api/clients/' + curClient.id + '/settle', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ notes: note })
-  }).then(function(){
-    closeModal(); loadDashboard();
-    if (curClient) loadClientSlips(curClient.id);
-  }).catch(function(e){ alert('Грешка: ' + e.message); });
+  closeModal();
+  loadDashboard();
 }
 
 function quickSettle(id) {
   var c = null;
-  for (var i = 0; i < CLIENTS.length; i++) { if (CLIENTS[i].id === id) { c = CLIENTS[i]; break; } }
+  CLIENTS_DATA.forEach(function (x) { if (x.id === id) c = x; });
   if (!c) return;
-  var bal = Number(c.balance || 0);
-  if (!confirm('Нулирай сметката на ' + c.name + '?\nБаланс: ' + (bal>=0?'+':'') + Math.round(bal) + ' лв.')) return;
-  fetch('/api/clients/' + id + '/settle', {
-    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({})
-  }).then(function(){ loadDashboard(); }).catch(function(e){ alert('Грешка: ' + e.message); });
+  if (!confirm('Нулирай сметката на ' + c.name + '?\nБаланс: ' + fmtBal(Number(c.balance || 0)))) return;
+  loadDashboard();
 }
 
-// ─── ADD CLIENT ──────────────────────────────────────────
-function openAddClient() {
-  var colorHtml = '';
-  for (var i = 0; i < COLORS.length; i++) {
-    var col = COLORS[i];
-    colorHtml += '<div class="color-dot' + (i===0?' on':'') + '" data-color="' + col + '" style="background:' + col + '" onclick="pickColor(this,\'add-colors\')"></div>';
-  }
-  openModal('Нов клиент',
-    '<div class="field"><label>Име</label><input id="a-name" placeholder="Румен"></div>' +
-    '<div class="field"><label>Цвят</label><div class="color-row" id="add-colors">' + colorHtml + '</div></div>' +
-    '<div class="modal-btns">' +
-      '<button type="button" class="mbtn c" onclick="closeModal()">Отказ</button>' +
-      '<button type="button" class="mbtn p" onclick="saveNewClient()">Добави</button>' +
-    '</div>'
+function openEditClient() {
+  if (!curClient) return;
+  var c = curClient;
+  openModal('Редактирай клиент',
+    '<div class="field"><label>Цвят</label><div class="colors">' +
+    COLORS.map(function (col) { return '<div class="color-opt' + (col === c.color ? ' on' : '') + '" data-c="' + col + '" style="background:' + col + '" onclick="pickColor(this)"></div>'; }).join('') +
+    '</div></div>' +
+    '<div class="modal-btns"><button type="button" class="mbtn c" onclick="closeModal()">Отказ</button><button type="button" class="mbtn p" onclick="saveEditClient()">Запази</button></div>'
   );
 }
 
-function saveNewClient() {
-  var name = document.getElementById('a-name').value.trim();
-  if (!name) { alert('Въведи име'); return; }
-  var sel   = document.querySelector('#add-colors .color-dot.on');
-  var color = sel ? sel.getAttribute('data-color') : '#6366f1';
-  fetch('/api/clients', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ name: name, color: color })
-  }).then(function(r){
-    return r.json().then(function(d){ return { ok: r.ok, data: d }; });
-  }).then(function(res){
-    if (!res.ok) { alert(res.data.error || 'Грешка'); return; }
-    closeModal(); loadDashboard();
-  }).catch(function(e){ alert('Грешка: ' + e.message); });
+function saveEditClient() { closeModal(); }
+
+function openAddClient() {
+  openModal('Нов клиент',
+    '<div class="field"><label>Клиентите са фиксирани</label><div style="font-size:12px;color:rgba(255,255,255,.3);padding:8px 0">Системата поддържа Румен, Славчо, Близнаците и Доги. За промяна свържи се с администратора.</div></div>' +
+    '<div class="modal-btns"><button type="button" class="mbtn p" onclick="closeModal()">Разбрах</button></div>'
+  );
 }
 
-// ─── MODAL ───────────────────────────────────────────────
+// ── MODAL ──────────────────────────────────────────────────
 function openModal(title, body) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML = body;
-  document.getElementById('modal-overlay').style.display = 'flex';
-  // Block Enter key
-  var inputs = document.querySelectorAll('#modal-body input, #modal-body textarea');
+  document.getElementById('modal-bg').style.display = 'flex';
+  var inputs = document.querySelectorAll('#modal-body input,#modal-body textarea');
   for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.keyCode === 13) e.preventDefault();
-    });
+    inputs[i].addEventListener('keydown', function (e) { if (e.keyCode === 13) e.preventDefault(); });
   }
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').style.display = 'none';
-}
+function closeModal() { document.getElementById('modal-bg').style.display = 'none'; }
 
-document.getElementById('modal-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+document.getElementById('modal-bg').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
 
-function pickColor(el, containerId) {
-  var opts = document.querySelectorAll('#' + containerId + ' .color-dot');
-  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('on');
+function pickColor(el) {
+  var all = document.querySelectorAll('#modal-body .color-opt');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('on');
   el.classList.add('on');
 }
 
-// ─── UPLOAD ──────────────────────────────────────────────
-document.getElementById('fin').addEventListener('change', function(e) {
+// ── UPLOAD ─────────────────────────────────────────────────
+document.getElementById('f-img').addEventListener('change', function (e) {
   var file = e.target.files && e.target.files[0];
   if (!file) return;
   imgFile = file;
   var reader = new FileReader();
-  reader.onload = function(ev) {
-    document.getElementById('prev-img').src = ev.target.result;
-    showEl('u-idle', false);
-    showEl('u-preview', true);
-    showEl('u-proc', false);
-    showEl('u-result', false);
-    showEl('u-err', false);
-    if (!selClient && CLIENTS.length) selClient = CLIENTS[0];
+  reader.onload = function (ev) {
+    document.getElementById('u-prev-img').src = ev.target.result;
+    show('u-idle', false); show('u-preview', true); show('u-proc', false); show('u-result', false); show('u-err', false);
+    if (!selClient && CLIENTS_DATA.length) selClient = CLIENTS_DATA[0];
     updatePills();
   };
   reader.readAsDataURL(file);
 });
 
 function pickClient(id) {
-  for (var i = 0; i < CLIENTS.length; i++) {
-    if (CLIENTS[i].id === id) { selClient = CLIENTS[i]; break; }
-  }
+  CLIENTS_DATA.forEach(function (c) { if (c.id === id) selClient = c; });
   updatePills();
 }
 
 function updatePills() {
   var el = document.getElementById('client-pills');
   if (!el) return;
-  var html = '';
-  for (var i = 0; i < CLIENTS.length; i++) {
-    var c   = CLIENTS[i];
+  el.innerHTML = CLIENTS_DATA.map(function (c) {
     var isS = selClient && selClient.id === c.id;
-    html +=
-      '<button type="button" class="cpill' + (isS?' on':'') + '" ' +
-      'style="' + (isS ? 'border-color:' + c.color + ';color:' + c.color + ';background:rgba(0,0,0,.2)' : '') + '" ' +
-      'onclick="pickClient(' + c.id + ')">' + c.name + '</button>';
-  }
-  el.innerHTML = html;
+    return '<button type="button" class="pill' + (isS ? ' on' : '') + '" style="' + (isS ? 'border-color:' + c.color + ';color:' + c.color : '') + '" onclick="pickClient(' + c.id + ')">' + c.name + '</button>';
+  }).join('');
 }
 
 function resetUpload() {
   imgFile = null;
-  document.getElementById('fin').value = '';
-  showEl('u-idle', true);
-  showEl('u-preview', false);
-  showEl('u-proc', false);
-  showEl('u-result', false);
-  showEl('u-err', false);
+  document.getElementById('f-img').value = '';
+  show('u-idle', true); show('u-preview', false); show('u-proc', false); show('u-result', false); show('u-err', false);
 }
 
 function showErr(msg) {
   document.getElementById('err-text').textContent = msg;
-  showEl('u-err', true);
-  showEl('u-proc', false);
-  showEl('u-preview', false);
-  showEl('u-idle', true);
+  show('u-err', true); show('u-proc', false); show('u-preview', false); show('u-idle', true);
 }
 
-function hideErr() {
-  showEl('u-err', false);
-}
+function hideErr() { show('u-err', false); }
 
 function setSteps(done, active) {
-  var defs = [
-    ['vision', 'GPT-4o Vision чете фиша'],
-    ['sports', 'Проверка на резултатите'],
-    ['calc',   'Изчисляване'],
-    ['save',   'Записване в Airtable']
-  ];
-  var html = '';
-  for (var i = 0; i < defs.length; i++) {
-    var key = defs[i][0], lbl = defs[i][1];
-    var isDone = done.indexOf(key) >= 0;
-    var isAct  = key === active;
-    html +=
-      '<div class="step' + (isDone?' done':isAct?' act':'') + '">' +
-        '<div class="sdot">' + (isDone?'✓':isAct?'●':'○') + '</div>' +
-        lbl +
-      '</div>';
-  }
-  document.getElementById('steps-wrap').innerHTML = html;
+  var defs = [['vision','GPT-4o чете фиша'],['sports','Проверка на резултатите'],['save','Записване в Airtable']];
+  document.getElementById('steps').innerHTML = defs.map(function (d) {
+    var isDone = done.indexOf(d[0]) >= 0, isAct = d[0] === active;
+    return '<div class="step' + (isDone ? ' done' : isAct ? ' act' : '') + '">' +
+      '<div class="step-dot">' + (isDone ? '✓' : isAct ? '●' : '○') + '</div>' + d[1] + '</div>';
+  }).join('');
 }
 
 function doAnalyze() {
-  if (!imgFile)    { showErr('Няма снимка'); return; }
-  if (!selClient)  { showErr('Избери клиент'); return; }
-  showEl('u-preview', false);
-  showEl('u-proc', true);
-  showEl('u-result', false);
-  showEl('u-err', false);
+  if (!imgFile)   { showErr('Няма снимка'); return; }
+  if (!selClient) { showErr('Избери клиент'); return; }
+  show('u-preview', false); show('u-proc', true); show('u-result', false); show('u-err', false);
   setSteps([], 'vision');
   var fd = new FormData();
   fd.append('image', imgFile);
   fd.append('client_id', String(selClient.id));
-  fetch('/api/analyze', { method: 'POST', body: fd })
-    .then(function(r) {
-      return r.json().then(function(d) { return { ok: r.ok, data: d }; });
-    })
-    .then(function(res) {
-      if (!res.ok) throw new Error(res.data.error || 'Грешка от сървъра');
-      setSteps(['vision','sports','calc','save'], null);
-      curResult = res.data;
-      showEl('u-proc', false);
-      renderResult(res.data);
+  apiFetch('/api/analyze', { method: 'POST', body: fd })
+    .then(function (data) {
+      setSteps(['vision','sports','save'], null);
+      curResult = data;
+      show('u-proc', false);
+      renderResult(data);
       loadDashboard();
     })
-    .catch(function(e) {
-      showEl('u-proc', false);
-      showErr(e.message || 'Неизвестна грешка');
-    });
+    .catch(function (e) { show('u-proc', false); showErr(e.message || 'Грешка'); });
 }
 
 function renderResult(data) {
@@ -796,222 +624,156 @@ function renderResult(data) {
   var ip  = data.isProfit, ipd = data.isPending;
   var cls = ipd ? 'pd' : ip ? 'pr' : 'ls';
   var ac  = ipd ? '#fbbf24' : ip ? '#4ade80' : '#f87171';
-  var at  = ipd ? '⏳ ИЗЧАКВАНЕ' : ((ip?'+':'-') + Number(data.ourAmount).toFixed(2) + ' лв.');
-  var ast = ipd ? 'МАЧОВЕТЕ НЕ СА ПРИКЛЮЧИЛИ' : ip ? 'ЗАГУБЕН ФИШ — НИЕ ПЕЧЕЛИМ' : 'СПЕЧЕЛЕН ФИШ — НИЕ ГУБИМ';
-  var s   = data.slip;
-  var cn  = selClient ? selClient.name : '';
+  var amtTxt = ipd ? '⏳ Изчакване' : fmtBal(ip ? data.ourAmount : -data.ourAmount);
+  var statusTxt = ipd ? 'МАЧОВЕТЕ НЕ СА ПРИКЛЮЧИЛИ' : ip ? 'ЗАГУБЕН ФИШ — НИЕ ПЕЧЕЛИМ' : 'СПЕЧЕЛЕН ФИШ — НИЕ ГУБИМ';
+  var s = data.slip || {};
   var html =
     '<div class="res-card">' +
-      '<div class="res-top ' + cls + '">' +
-        '<div class="res-label">НАШ РЕЗУЛТАТ · ' + cn + '</div>' +
-        '<div class="res-amt" style="color:' + ac + '">' + at + '</div>' +
-        '<div class="res-status" style="color:' + ac + '">' + ast + '</div>' +
-      '</div>' +
-      '<div class="res-stats">' +
-        '<div class="rs"><div class="rs-l">ЗАЛОГ</div><div class="rs-v">' + (s.stake||0) + ' лв.</div></div>' +
-        '<div class="rs"><div class="rs-l">×КОЕ-ТО</div><div class="rs-v">×' + (s.totalOdds||1) + '</div></div>' +
-        '<div class="rs"><div class="rs-l">ПОТ. ПЕЧАЛБА</div><div class="rs-v">' + (s.potentialWin||0) + ' лв.</div></div>' +
-      '</div>' +
-      '<div class="matches">';
-
-  var matches = data.matches || [];
-  for (var i = 0; i < matches.length; i++) {
-    var m  = matches[i];
-    var mw = m.result === 'WIN', ml = m.result === 'LOSS', mv = m.result === 'LIVE';
-    html +=
-      '<div class="mrow' + (mw?' w':ml?' l':mv?' v':'') + '">' +
-        '<div style="flex:1">' +
-          '<div class="mt">' + (m.display||'') + '</div>' +
-          '<div class="mm">×' + (m.odds||1) + ' · ' + (m.sport||'') + (m.score&&m.score!=='N/F'?' · '+m.score:'') + '</div>' +
-        '</div>' +
-        '<div style="text-align:right">' +
-          '<div class="mi">' + (mw?'❌':ml?'✅':mv?'🔴':'⏳') + '</div>' +
-          '<div class="obs">' +
-            '<button type="button" class="ob w" onclick="overrideMatch(' + i + ',\'WIN\')">❌</button>' +
-            '<button type="button" class="ob l" onclick="overrideMatch(' + i + ',\'LOSS\')">✅</button>' +
-            '<button type="button" class="ob p" onclick="overrideMatch(' + i + ',\'PENDING\')">⏳</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-  }
-
-  html += '</div>';
-  if (ipd) html += '<button type="button" class="save-btn" onclick="manualSave()">💾 Запази ръчно</button>';
-  html += '<button type="button" class="new-slip-btn" onclick="resetUpload()">✕ Нов фиш</button>';
-  html += '</div>';
+    '<div class="res-top ' + cls + '">' +
+      '<div class="res-label">РЕЗУЛТАТ · ' + (selClient ? selClient.name : '') + '</div>' +
+      '<div class="res-amt" style="color:' + ac + '">' + amtTxt + '</div>' +
+      '<div class="res-status" style="color:' + ac + '">' + statusTxt + '</div>' +
+    '</div>' +
+    '<div class="res-stats">' +
+      '<div class="rss"><div class="rss-l">Залог</div><div class="rss-v">' + (s.stake || 0) + ' лв.</div></div>' +
+      '<div class="rss"><div class="rss-l">Коефициент</div><div class="rss-v">x' + (s.totalOdds || 1) + '</div></div>' +
+      '<div class="rss"><div class="rss-l">Потенциал</div><div class="rss-v">' + (s.potentialWin || 0) + ' лв.</div></div>' +
+    '</div>' +
+    '<div class="match-list">' +
+    (data.matches || []).map(function (m, i) {
+      var mw = m.result === 'WIN', ml = m.result === 'LOSS', mv = m.result === 'LIVE';
+      return '<div class="match-row' + (mw?' w':ml?' l':mv?' v':'') + '">' +
+        '<div class="match-txt"><div class="match-name">' + (m.display || '') + '</div>' +
+        '<div class="match-sub">x' + (m.odds || 1) + ' · ' + (m.sport || '') + (m.score && m.score !== 'N/F' ? ' · ' + m.score : '') + '</div>' +
+        '<div class="override-btns">' +
+          '<button type="button" class="ob w" onclick="override(' + i + ',\'WIN\')">❌</button>' +
+          '<button type="button" class="ob l" onclick="override(' + i + ',\'LOSS\')">✅</button>' +
+          '<button type="button" class="ob p" onclick="override(' + i + ',\'PENDING\')">⏳</button>' +
+        '</div></div>' +
+        '<div class="match-icon">' + (mw?'❌':ml?'✅':mv?'🔴':'⏳') + '</div>' +
+        '</div>';
+    }).join('') +
+    '</div>';
+  if (ipd) html += '<button type="button" class="btn-save" onclick="saveManual()">💾 Запази ръчно</button>';
+  html += '<button type="button" class="btn-new-slip" onclick="resetUpload()">✕ Нов фиш</button></div>';
   el.innerHTML = html;
 }
 
-function overrideMatch(i, v) {
+function override(i, val) {
   if (!curResult) return;
-  curResult.matches[i].result = v;
-  var anyL = false, allW = curResult.matches.length > 0;
-  for (var j = 0; j < curResult.matches.length; j++) {
-    if (curResult.matches[j].result === 'LOSS') anyL = true;
-    if (curResult.matches[j].result !== 'WIN')  allW = false;
-  }
-  curResult.isProfit  = anyL;
-  curResult.isPending = !anyL && !allW;
-  curResult.ourAmount = curResult.isPending ? 0 : anyL ? curResult.slip.stake : curResult.slip.potentialWin;
-  fetch('/api/slips/' + curResult.slip.id, {
-    method: 'PATCH', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      result:     curResult.isPending ? 'PENDING' : anyL ? 'LOSS' : 'WIN',
-      our_amount: curResult.ourAmount,
-      is_profit:  anyL,
-      matches:    curResult.matches
-    })
-  });
+  curResult.matches[i].result = val;
+  recalcResult();
+  patchSlip();
   renderResult(curResult);
 }
 
-function manualSave() {
-  if (!curResult) return;
-  var anyL = false, allW = curResult.matches.length > 0;
-  for (var j = 0; j < curResult.matches.length; j++) {
-    if (curResult.matches[j].result === 'LOSS') anyL = true;
-    if (curResult.matches[j].result !== 'WIN')  allW = false;
-  }
-  var ip   = anyL, ipd = !anyL && !allW;
-  var amt  = ipd ? 0 : ip ? curResult.slip.stake : curResult.slip.potentialWin;
-  var res  = ipd ? 'PENDING' : ip ? 'LOSS' : 'WIN';
-  fetch('/api/slips/' + curResult.slip.id, {
-    method: 'PATCH', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ result: res, our_amount: amt, is_profit: ip, matches: curResult.matches })
-  }).then(function() { loadDashboard(); resetUpload(); })
-    .catch(function(e) { alert('Грешка: ' + e.message); });
+function recalcResult() {
+  var ms = curResult.matches || [];
+  var anyLoss = ms.some(function (m) { return m.result === 'LOSS'; });
+  var allWin  = ms.length > 0 && ms.every(function (m) { return m.result === 'WIN'; });
+  curResult.isProfit  = anyLoss;
+  curResult.isPending = !anyLoss && !allWin;
+  var s = curResult.slip || {};
+  curResult.ourAmount = curResult.isPending ? 0 : curResult.isProfit ? Number(s.stake || 0) : Number(s.potentialWin || 0);
+  curResult.result = curResult.isPending ? 'PENDING' : curResult.isProfit ? 'LOSS' : 'WIN';
 }
 
-// ─── MANUAL SLIP ─────────────────────────────────────────
-function openManual() {
-  if (!CLIENTS.length) return;
-  var opts = '';
-  for (var i = 0; i < CLIENTS.length; i++) {
-    opts += '<option value="' + CLIENTS[i].id + '">' + CLIENTS[i].name + '</option>';
-  }
-  var today = new Date().toISOString().slice(0, 10);
-  openModal('Добави фиш ръчно',
-    '<div class="field"><label>Клиент</label><select id="m-client">' + opts + '</select></div>' +
-    '<div class="field"><label>Дата</label><input type="date" id="m-date" value="' + today + '"></div>' +
-    '<div class="field"><label>Залог (лв.)</label><input type="number" id="m-stake" placeholder="150"></div>' +
-    '<div class="field"><label>Резултат</label><select id="m-result">' +
-      '<option value="LOSS">Загубен фиш — НИЕ ПЕЧЕЛИМ</option>' +
-      '<option value="WIN">Спечелен фиш — НИЕ ГУБИМ</option>' +
-      '<option value="PENDING">Изчакване</option>' +
-    '</select></div>' +
-    '<div class="field"><label>Наша сума (лв.)</label><input type="number" id="m-amount" placeholder="150"></div>' +
-    '<div class="field"><label>Мачове</label><input id="m-matches" placeholder="КАР · КОЛ · НЙ Янкис"></div>' +
-    '<div class="modal-btns">' +
-      '<button type="button" class="mbtn c" onclick="closeModal()">Отказ</button>' +
-      '<button type="button" class="mbtn p" onclick="saveManual()">Запази</button>' +
-    '</div>'
-  );
+function patchSlip() {
+  if (!curResult || !curResult.atId) return;
+  apiFetch('/api/slips/' + curResult.atId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tableId:   curResult.tableId,
+      clientId:  curResult.clientId,
+      isPending: curResult.isPending,
+      isProfit:  curResult.isProfit,
+      ourAmount: curResult.ourAmount
+    })
+  }).catch(function (e) { console.error('patch:', e.message); });
 }
 
 function saveManual() {
-  var clientId  = document.getElementById('m-client').value;
-  var slipDate  = document.getElementById('m-date').value;
-  var stake     = parseFloat(document.getElementById('m-stake').value) || 0;
-  var result    = document.getElementById('m-result').value;
-  var ourAmount = parseFloat(document.getElementById('m-amount').value) || stake;
-  var matchTxt  = document.getElementById('m-matches').value;
-  var isProfit  = result === 'LOSS';
-  fetch('/api/slips/manual', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      client_id:  clientId, slip_date: slipDate, stake: stake,
-      result:     result,   our_amount: ourAmount, is_profit: isProfit,
-      matches:    matchTxt ? [{ display: matchTxt }] : []
-    })
-  }).then(function(r){ return r.json().then(function(d){return{ok:r.ok,data:d};}); })
-    .then(function(res){
-      if (!res.ok) { alert(res.data.error || 'Грешка'); return; }
-      closeModal(); loadDashboard();
-    }).catch(function(e){ alert('Грешка: ' + e.message); });
+  recalcResult();
+  patchSlip();
+  loadDashboard();
+  resetUpload();
 }
 
-// ─── LIVE ────────────────────────────────────────────────
+// ── MANUAL SLIP ─────────────────────────────────────────────
+function openManual() {
+  if (!CLIENTS_DATA.length) return;
+  var opts = CLIENTS_DATA.map(function (c) { return '<option value="' + c.id + '">' + c.name + '</option>'; }).join('');
+  var today = new Date().toISOString().slice(0, 10);
+  openModal('Добави фиш ръчно',
+    '<div class="field"><label>Клиент</label><select id="m-cl">' + opts + '</select></div>' +
+    '<div class="field"><label>Дата</label><input type="date" id="m-dt" value="' + today + '"></div>' +
+    '<div class="field"><label>Мачове</label><input id="m-ms" placeholder="CAR · MTL · VGK"></div>' +
+    '<div class="field"><label>Залог (лв.)</label><input type="number" id="m-st" placeholder="150"></div>' +
+    '<div class="field"><label>Коефициент</label><input type="number" id="m-od" placeholder="3.81"></div>' +
+    '<div class="field"><label>Резултат</label><select id="m-res"><option value="LOSS">Загубен фиш — Ние печелим</option><option value="WIN">Спечелен фиш — Ние губим</option><option value="PENDING">Изчакване</option></select></div>' +
+    '<div class="field"><label>Наша сума (лв.)</label><input type="number" id="m-am" placeholder="150"></div>' +
+    '<div class="modal-btns"><button type="button" class="mbtn c" onclick="closeModal()">Отказ</button><button type="button" class="mbtn p" onclick="doManual()">Запази</button></div>'
+  );
+}
+
+function doManual() {
+  var clientId = document.getElementById('m-cl').value;
+  var slipDate = document.getElementById('m-dt').value;
+  var matchText = document.getElementById('m-ms').value;
+  var stake    = parseFloat(document.getElementById('m-st').value) || 0;
+  var odds     = parseFloat(document.getElementById('m-od').value) || 1;
+  var result   = document.getElementById('m-res').value;
+  var ourAmt   = parseFloat(document.getElementById('m-am').value) || stake;
+  apiFetch('/api/slips/manual', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ client_id: clientId, slip_date: slipDate, match_text: matchText, stake: stake, odds: odds, result: result, our_amount: ourAmt })
+  }).then(function () { closeModal(); loadDashboard(); })
+    .catch(function (e) { alert('Грешка: ' + e.message); });
+}
+
+// ── LIVE ───────────────────────────────────────────────────
 function loadLive() {
-  var el = document.getElementById('live-content');
-  el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Зарежда...</div>';
-  fetch('/api/live').then(function(r){ return r.json(); }).then(function(res){
-    var live = res.live || [];
-    if (!live.length) {
-      el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Няма активни мачове в момента</div>';
-      return;
-    }
-    var html = '';
-    for (var i = 0; i < live.length; i++) {
-      var g    = live[i];
-      var isL  = g.status === 'LIVE';
-      var dotC = isL ? '#f87171' : 'rgba(255,255,255,.3)';
-      var stTxt = isL ? 'НА ЖИВО' : 'ПРЕДСТОЯЩ';
-      html +=
-        '<div class="live-card">' +
-          '<div class="lc-top">' +
-            '<div class="lc-live">' +
-              '<span style="width:7px;height:7px;border-radius:50%;background:' + dotC + ';display:inline-block' + (isL?';animation:blink 1.4s infinite':'') + '"></span> ' + stTxt +
-            '</div>' +
-            '<span class="lc-league">' + (g.sport||'') + '</span>' +
-          '</div>' +
-          '<div class="lc-score">' +
-            '<div class="lc-team">' + (g.away||'') + '</div>' +
-            (isL ?
-              '<div class="lc-num">' + (g.awayScore||0) + ' : ' + (g.homeScore||0) + '</div>' :
-              '<div class="lc-upcoming">vs</div>'
-            ) +
-            '<div class="lc-team" style="text-align:right">' + (g.home||'') + '</div>' +
-          '</div>' +
-        '</div>';
-    }
-    el.innerHTML = html;
-  }).catch(function(){
-    el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Грешка при зареждане</div>';
-  });
+  var el = document.getElementById('live-wrap');
+  el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.25);padding:40px">Зарежда...</div>';
+  apiFetch('/api/live').then(function (data) {
+    var live = data.live || [];
+    if (!live.length) { el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.25);padding:40px">Няма активни мачове</div>'; return; }
+    el.innerHTML = live.map(function (g) {
+      var isL = g.status === 'LIVE';
+      return '<div class="live-card">' +
+        '<div class="lc-hdr">' +
+          '<div class="lc-live-badge">' + (isL ? '<div class="lc-dot"></div> НА ЖИВО' : '⏰ ПРЕДСТОЯЩ') + '</div>' +
+          '<div class="lc-sport">' + g.sport + '</div>' +
+        '</div>' +
+        '<div class="lc-score"><div class="lc-team">' + g.away + '</div>' +
+          (isL ? '<div class="lc-num">' + g.awayScore + ' : ' + g.homeScore + '</div>' : '<div style="color:rgba(255,255,255,.3)">vs</div>') +
+        '<div class="lc-team" style="text-align:right">' + g.home + '</div></div></div>';
+    }).join('');
+  }).catch(function () { el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.25);padding:40px">Грешка</div>'; });
 }
 
-// ─── HISTORY ─────────────────────────────────────────────
+// ── HISTORY ────────────────────────────────────────────────
 function loadHist() {
-  var el = document.getElementById('hist-content');
+  var el = document.getElementById('hist-wrap');
   el.innerHTML = '';
-  fetch('/api/clients').then(function(r){ return r.json(); }).then(function(data){
-    var html = '';
-    for (var i = 0; i < data.length; i++) {
-      var c   = data[i];
+  apiFetch('/api/clients').then(function (data) {
+    el.innerHTML = data.map(function (c) {
       var bal = Number(c.balance || 0);
-      var tot = Number(c.total   || 0);
-      var nc  = bal >= 0 ? '#4ade80' : '#f87171';
-      var nt  = tot >= 0 ? '#4ade80' : '#f87171';
-      html +=
-        '<div class="hist-item" onclick="openClientById(' + c.id + ')">' +
-          '<div class="hist-left">' +
-            '<div class="hist-name" style="color:' + c.color + '">' + c.name + '</div>' +
-            '<div class="hist-sub">' + (c.total_slips||0) + ' фиша · ' + c.wins + 'W ' + c.losses + 'L</div>' +
-          '</div>' +
-          '<div class="hist-right">' +
-            '<div class="hist-bal" style="color:' + nc + '">' + (bal>=0?'+':'') + Math.round(bal) + ' лв.</div>' +
-            '<div class="hist-total" style="color:' + nt + '">Тотал: ' + (tot>=0?'+':'') + Math.round(tot) + ' лв.</div>' +
-          '</div>' +
+      return '<div class="hist-item" onclick="openClientPage(' + c.id + ')">' +
+        '<div><div class="hi-name" style="color:' + c.color + '">' + c.name + '</div>' +
+        '<div class="hi-sub">' + c.total_slips + ' фиша · ' + c.wins + 'W ' + c.losses + 'L</div></div>' +
+        '<div><div class="hi-bal" style="color:' + balColor(bal) + '">' + fmtBal(bal) + '</div>' +
+        '<div class="hi-slips">баланс</div></div>' +
         '</div>';
-    }
-    el.innerHTML = html || '<div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Няма данни</div>';
-  }).catch(function(){
-    el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.3);padding:40px">Грешка</div>';
-  });
+    }).join('') || '<div style="text-align:center;color:rgba(255,255,255,.25);padding:30px">Няма данни</div>';
+  }).catch(function () {});
 }
 
-function openClientById(id) {
-  for (var i = 0; i < CLIENTS.length; i++) {
-    if (CLIENTS[i].id === id) { openClientPage(CLIENTS[i]); return; }
-  }
-}
-
-// ─── INIT ────────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────────
 loadDashboard();
 setInterval(loadDashboard, 30000);
-setInterval(function() {
-  if (document.getElementById('pg-live').className.indexOf('on') >= 0) loadLive();
-}, 30000);
 </script>
 </body>
 </html>
